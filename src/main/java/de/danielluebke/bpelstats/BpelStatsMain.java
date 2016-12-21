@@ -154,10 +154,10 @@ public final class BpelStatsMain {
 				"Gather BPEL Extensions and ExtensionActivities (excludes -c and -s)").create("e"));
 
 		options.addOption(OptionBuilder.withDescription(
-				"Anonymize BPEL file names (superceeds -p)").create("a"));
+				"Anonymize BPEL file names (overrides -p)").create("a"));
 		
 		options.addOption(OptionBuilder.withDescription(
-				"Uses pseudo anonymization printing both anonymized and non-anonymized file names (superceeded by -a)").create("p"));
+				"Uses pseudo anonymization printing both anonymized and non-anonymized file names (overridden by -a)").create("p"));
 
 		options.addOption(OptionBuilder
 				.withDescription(
