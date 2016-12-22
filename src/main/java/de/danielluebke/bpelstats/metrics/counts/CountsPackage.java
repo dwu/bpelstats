@@ -57,7 +57,15 @@ public class CountsPackage extends StatisticsPackage {
 				"#AVOnSignal",
 				"#AVSignalReceive",
 				"#AVSignalSend",
-				"#WPSFlow"
+				"#WPSFlow",
+				"#WPSExitCondition",
+				"#WPSJavaGlobals",
+				"#WPSImport",
+				"#WPSScript",
+				"#WPSJavaCode",
+				"#WPSCustomProperty",
+				"#WPSDescription",
+				"#WPSDocumentation"
 		};
 	}
 
@@ -111,7 +119,15 @@ public class CountsPackage extends StatisticsPackage {
 				result.getCountActiveVOSOnSignal(),
 				result.getCountActiveVOSSignalReceive(),
 				result.getCountActiveVOSSignalSend(),
-				result.getCountWPSFlow()
+				result.getCountWPSFlow(),
+				result.getCountWPSExitCondition(),
+				result.getCountWPSJavaGlobals(),
+				result.getCountWPSImport(),
+				result.getCountWPSScript(),
+				result.getCountWPSJavaCode(),
+				result.getCountWPSCustomProperty(),
+				result.getCountWPSDescription(),
+				result.getCountWPSDocumentation()
 			};
 	}
 

@@ -11,7 +11,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 
-public class SAXStatsGatherer implements BpelStatsGatherer {
+public class SAXStatsGatherer {
 
 	private SAXStatsHandler handler;
 	private XMLReader xmlReader;

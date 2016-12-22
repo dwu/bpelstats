@@ -1,6 +1,7 @@
 package de.danielluebke.bpelstats.metrics.counts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 
-public class SAXStatsHandler extends DefaultHandler implements BpelStatsFileResult {
+public class SAXStatsHandler extends DefaultHandler {
 
+	private static final String NAMESPACE_WPC = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
+	private static final List<String> WPC_EXTENSIONS = Arrays.asList("exitCondition", "javaGlobals", "import", "script", "javaCode", "customProperty", "value", "description", "documentation");
+	
 	private String bpelNamespace;
 	private Map<String, Integer> bpelCounts;
 	private Map<String, Integer> extensionCounts;
@@ -53,7 +57,8 @@ public class SAXStatsHandler extends DefaultHandler implements BpelStatsFileResu
 		
 		if(
 			(elementPath.size() > 0 && elementPath.get(elementPath.size()-1).equals("extensionActivity")) ||
-			(localName.equals("onSignal") && uri.equals("http://www.activebpel.org/2006/09/bpel/extension/activity"))
+			(localName.equals("onSignal") && uri.equals("http://www.activebpel.org/2006/09/bpel/extension/activity")) ||
+			(uri.equals(NAMESPACE_WPC) && WPC_EXTENSIONS.contains(localName))
 			) {
 			String normalizedName = "{" + uri + "}" + localName;
 			Integer count = extensionCounts.get(normalizedName);
@@ -254,7 +259,39 @@ public class SAXStatsHandler extends DefaultHandler implements BpelStatsFileResu
 	public int getCountWPSFlow() {
 		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}flow");
 	}
-
+	
+	public int getCountWPSExitCondition() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}exitCondition");
+	}
+	
+	public int getCountWPSJavaGlobals() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}javaGlobals");
+	}
+	
+	public int getCountWPSImport() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}import");
+	}
+	
+	public int getCountWPSScript() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}script");
+	}
+	
+	public int getCountWPSJavaCode() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}javaCode");
+	}
+	
+	public int getCountWPSCustomProperty() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}customProperty");
+	}
+	
+	public int getCountWPSDescription() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}description");
+	}
+	
+	public int getCountWPSDocumentation() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}documentation");
+	}
+	
 	public int getCountAllActivities() {
 		return getCountAssign() + getCountCatch() + getCountCatchAll() + getCountCompensate()
 				+ getCountCompensateScope() + getCountCompensationHandler() + getCountCopy()
