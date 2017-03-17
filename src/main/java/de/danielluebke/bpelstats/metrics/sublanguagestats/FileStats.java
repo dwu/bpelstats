@@ -26,6 +26,8 @@ public class FileStats {
 	public int xpathExpressionOccurrences = 0;
 	public int xqueryComplexity = 0;
 	public int xsltComplexity = 0;
+	public int javaExpressionLOCs = 0;
+	public int javaExpressionOccurrences = 0;
 
 	@Override
 	public String toString() {
@@ -51,5 +53,7 @@ public class FileStats {
 		xpathExpressionOccurrences += f.xpathExpressionOccurrences;
 		xqueryComplexity += f.xqueryComplexity;
 		xsltComplexity += f.xsltComplexity;
+		javaExpressionLOCs += f.javaExpressionLOCs;
+		javaExpressionOccurrences += f.javaExpressionOccurrences;
 	}
 }

@@ -16,12 +16,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public abstract class StatisticsPackage {
 
-	private String[] bpelFilenames;
+	protected String[] bpelFilenames;
 	private boolean isPrintHeader;
-	private Writer writer;
-	private String delimiter;
+	protected String delimiter;
 	private boolean doAnonymization;
 	private boolean doPseudoAnonymization;
+	protected Writer writer;
 
 	public void setPrintHeader(boolean printHeader) {
 		this.isPrintHeader = printHeader;
@@ -56,16 +56,12 @@ public abstract class StatisticsPackage {
 	}
 	
 	public void runStatistics() throws IOException {
-		if(isPrintHeader) {
-			String[] headers = getFieldTitles();
-			writer.write("Filename");
-			for(String header : headers) {
-				writer.write(delimiter);
-				writer.write(header);
-			}
-			writer.write("\n");
-		}
+		printHeader();
 		
+		printStatistics();
+	}
+
+	protected void printStatistics() throws IOException {
 		for(String bpelFilename : bpelFilenames) {
 			writer.write(anonymizeFilenameIfNecessary(bpelFilename));
 			
@@ -78,6 +74,18 @@ public abstract class StatisticsPackage {
 			} catch(Exception e) {
 				writer.write("Error calculating metrics: " + e.getMessage());
 				e.printStackTrace();
+			}
+			writer.write("\n");
+		}
+	}
+
+	protected void printHeader() throws IOException {
+		if(isPrintHeader) {
+			String[] headers = getFieldTitles();
+			writer.write("Filename");
+			for(String header : headers) {
+				writer.write(delimiter);
+				writer.write(header);
 			}
 			writer.write("\n");
 		}

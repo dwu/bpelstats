@@ -19,6 +19,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.IOUtils;
 
 import de.danielluebke.bpelstats.metrics.StatisticsPackage;
+import de.danielluebke.bpelstats.metrics.assign.AssignStatsPackage;
 import de.danielluebke.bpelstats.metrics.complexity.ComplexityPackage;
 import de.danielluebke.bpelstats.metrics.counts.CountsPackage;
 import de.danielluebke.bpelstats.metrics.extensions.ExtensionsPackage;
@@ -39,6 +40,8 @@ public final class BpelStatsMain {
 	private List<String> bpelFileList;
 	private String reuseDirectories;
 	private boolean isModePrintHelp;
+
+	private boolean isModeAssign;
 
 	private BpelStatsMain() {
 	}
@@ -76,6 +79,8 @@ public final class BpelStatsMain {
 			} else if(isModeSublanguageStatistics) {
 				mainStrategy = new SublanguageStatsPackage();
 				((SublanguageStatsPackage)mainStrategy).setReuseDir(reuseDirectories);
+			} else if(isModeAssign) {
+				mainStrategy = new AssignStatsPackage();
 			} else {
 				mainStrategy = new CountsPackage();
 			}
@@ -115,6 +120,7 @@ public final class BpelStatsMain {
 		isModeComplexityMetrics = cmd.hasOption('c');
 		isModeExtensions = cmd.hasOption('e');
 		isModePrintHelp = cmd.hasOption("help");
+		isModeAssign = cmd.hasOption("assign");
 
 		if (cmd.hasOption('f')) {
 			out = new FileWriter(cmd.getOptionValue('f'));
@@ -159,6 +165,12 @@ public final class BpelStatsMain {
 		options.addOption(OptionBuilder.withDescription(
 				"Uses pseudo anonymization printing both anonymized and non-anonymized file names (overridden by -a)").create("p"));
 
+		options.addOption(OptionBuilder
+				.withDescription(
+						"Assign Statistics")
+				.withLongOpt("assign")
+				.create());
+		
 		options.addOption(OptionBuilder
 				.withDescription(
 						"Directories for re-usable assets (XSLT/XQuery). Only applicable for -s option")

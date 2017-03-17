@@ -18,7 +18,17 @@ import es.uca.webservices.xquery.parser.util.XQueryParsingException;
 public class BPELSubLanguageParser extends DefaultHandler {
 
 	private static final String BPEL_URN_XQUERY = "urn:active-endpoints:expression-language:xquery1.0";
-	private static final String BPEL_URN_XPATH = "urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0";
+	private static final List<String> BPEL_URN_XPATH = Arrays.asList(
+				"urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0", 
+				"http://www.w3.org/TR/1999/REC-xpath-19991116"
+		);
+	private static final List<String> URN_JAVA = Arrays.asList(
+			"urn:bpelstats:java", 
+			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/"
+		);
+
+	private static final String NAMESPACE_PROCESSSERVER = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
+	
 	private File baseDirectory;
 	
 	public static class LanguageFragment {
@@ -31,8 +41,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private static final String[] XSLT_IMPORT_TYPES = new String[] { "http://www.w3.org/1999/XSL/Transform" };
 	
 	private StringBuilder textContent = new StringBuilder();
-	private String defaultQueryLanguage = BPEL_URN_XPATH;
-	private String defaultExpressionLanguage = BPEL_URN_XPATH;
+	private String defaultQueryLanguage;
+	private String defaultExpressionLanguage;
 	
 	private List<LanguageFragment> queryFragments = new ArrayList<BPELSubLanguageParser.LanguageFragment>();
 	private List<LanguageFragment> expressionFragments = new ArrayList<BPELSubLanguageParser.LanguageFragment>();
@@ -55,6 +65,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private int xpathExpressionOccurrences = 0;
 	private int xqueryComplexityQuery = 0;
 	private int xqueryComplexityExpression = 0;
+	private int javaExpressionOccurrences;
+	private int javaExpressionLOCs;
 	private String bpelNamespace;
 	
 	public BPELSubLanguageParser(File baseDirectory) {
@@ -64,8 +76,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		textContent = new StringBuilder();
-		defaultQueryLanguage = BPEL_URN_XPATH;
-		defaultExpressionLanguage = BPEL_URN_XPATH;
+		defaultQueryLanguage = BPEL_URN_XPATH.get(0);
+		defaultExpressionLanguage = BPEL_URN_XPATH.get(0);
 		imports.clear();
 		queryFragments.clear();
 		expressionFragments.clear();
@@ -80,16 +92,13 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		if(bpelNamespace==null) {
+		if(bpelNamespace == null) {
 			bpelNamespace = uri;
 		}
 		
-		if(!bpelNamespace.equals(uri)) {
-			return; // skip non-BPEL elements
-		}
-		
 		textContent.delete(0, textContent.length());
-		if(localName.equals("process")) {
+		
+		if(bpelNamespace.equals(uri) && localName.equals("process")) {
 			String expressionLanguage = attributes.getValue("expressionLanguage");
 			if(expressionLanguage != null) {
 				defaultExpressionLanguage = expressionLanguage;
@@ -100,7 +109,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			}
 		}
 		
-		if(localName.equals("import")) {
+		if(bpelNamespace.equals(uri) && localName.equals("import")) {
 			String type = attributes.getValue("importType");
 			if(Arrays.asList(XQUERY_IMPORT_TYPES).contains(type)) {
 				Import i = new Import();
@@ -122,18 +131,23 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		}
 		
 		if(
-				localName.equals("condition") || 
-				localName.equals("for") || 
-				localName.equals("until") || 
-				localName.equals("repeatEvery") || 
-				localName.equals("from") || 
-				localName.equals("startCounterValue") || 
-				localName.equals("finalCounterValue") || 
-				localName.equals("completionCondition") || 
-				localName.equals("branches") || 
-				localName.equals("joinCondition") || 
-				localName.equals("transitionCondition") || 
-				localName.equals("to")
+				(bpelNamespace.equals(uri) && (
+						localName.equals("condition") || 
+						localName.equals("for") || 
+						localName.equals("until") || 
+						localName.equals("repeatEvery") || 
+						localName.equals("from") || 
+						localName.equals("startCounterValue") || 
+						localName.equals("finalCounterValue") || 
+						localName.equals("completionCondition") || 
+						localName.equals("branches") || 
+						localName.equals("joinCondition") || 
+						localName.equals("transitionCondition") || 
+						localName.equals("to")
+				)) ||
+				( NAMESPACE_PROCESSSERVER.equals(uri) && (
+						localName.equals("exitCondition")
+				))
 			) {
 			String expressionLanguage = attributes.getValue("expressionLanguage");
 			currentFragment = new LanguageFragment();
@@ -145,7 +159,16 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			expressionFragments.add(currentFragment);
 		}
 		
-		if(localName.equals("literal")) {
+		if(uri.equals(NAMESPACE_PROCESSSERVER) && localName.equals("javaCode")) {
+			currentFragment = new LanguageFragment();
+			currentFragment.language = URN_JAVA.get(0);
+			currentFragment.elementName = new QName(uri, localName);
+			expressionFragments.add(currentFragment);
+		}
+		
+		if(
+				(bpelNamespace.equals(uri) && localName.equals("literal"))
+			) {
 			// assign/from/literal must not be counted
 			expressionFragments.remove(currentFragment);
 			queryFragments.remove(currentFragment);
@@ -167,10 +190,11 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
+		
 		if(currentFragment != null) {
 			currentFragment.fragment = textContent.toString();
 		
-			if(currentFragment.fragment == null) {
+			if(currentFragment.fragment == null || "".trim().equals(currentFragment.fragment)) {
 				expressionFragments.remove(currentFragment);
 				queryFragments.remove(currentFragment);
 			}
@@ -193,7 +217,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		XQuerySubLanguageParser xqueryParser = new XQuerySubLanguageParser();
 		
 		for(LanguageFragment lf : queryFragments) {
-			if(BPEL_URN_XPATH.equals(lf.language)) {
+			if(BPEL_URN_XPATH.contains(lf.language)) {
 				xpathQueryOccurrences++;
 				xpathQueryLOCs += calculateLOC(lf);
 			} else if(BPEL_URN_XQUERY.equals(lf.language)) {
@@ -216,7 +240,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		}
 		
 		for(LanguageFragment lf : expressionFragments) {
-			if(BPEL_URN_XPATH.equals(lf.language)) {
+			if(BPEL_URN_XPATH.contains(lf.language)) {
 				xpathExpressionOccurrences++;
 				xpathExpressionLOCs += calculateLOC(lf);
 			} else if(BPEL_URN_XQUERY.equals(lf.language)) {
@@ -235,9 +259,12 @@ public class BPELSubLanguageParser extends DefaultHandler {
 					xquerySimpleExpressionOccurrences++;
 					xquerySimpleExpressionLOCs += loc;
 				}
-			}
+			} else if(URN_JAVA.contains(lf.language)) {
+				javaExpressionOccurrences ++;
+				javaExpressionLOCs += calculateLOC(lf);
+			} else
+				System.err.println(lf.language + " not found!");
 		}
-		
 	}
 
 	private void resetLOCCounts() {
@@ -330,5 +357,13 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	
 	public int getXQueryComplexityQuery() {
 		return xqueryComplexityQuery;
+	}
+
+	public int getJavaExpressionOccurrences() {
+		return javaExpressionOccurrences;
+	}
+
+	public int getJavaExpressionLOCs() {
+		return javaExpressionLOCs;
 	}
 }

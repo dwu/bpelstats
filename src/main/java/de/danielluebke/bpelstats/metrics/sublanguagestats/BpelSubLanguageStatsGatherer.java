@@ -45,6 +45,8 @@ public class BpelSubLanguageStatsGatherer {
 		bpelFileStats.xpathQueryOccurrences = handler.getXPathQueryOccurrences();
 		bpelFileStats.xpathExpressionOccurrences = handler.getXPathExpressionOccurrences();
 		bpelFileStats.xqueryComplexity = handler.getXQueryComplexityExpression() + handler.getXQueryComplexityQuery();
+		bpelFileStats.javaExpressionLOCs = handler.getJavaExpressionLOCs();
+		bpelFileStats.javaExpressionOccurrences = handler.getJavaExpressionOccurrences();
 		fileStats.add(bpelFileStats);
 		
 		XQuerySubLanguageParser xqueryParser = new XQuerySubLanguageParser();

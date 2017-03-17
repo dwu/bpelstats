@@ -15,7 +15,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class SAXStatsHandler extends DefaultHandler {
 
 	private static final String NAMESPACE_WPC = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
-	private static final List<String> WPC_EXTENSIONS = Arrays.asList("exitCondition", "javaGlobals", "import", "script", "javaCode", "customProperty", "value", "description", "documentation");
+	private static final List<String> WPC_EXTENSIONS = Arrays.asList("exitCondition", "javaGlobals", "import", "script", "javaCode", "customProperty", "value", "description", "documentation", "true", "false");
 	
 	private String bpelNamespace;
 	private Map<String, Integer> bpelCounts;
@@ -303,6 +303,15 @@ public class SAXStatsHandler extends DefaultHandler {
 				+ getCountExtensionActivities();
 	}
 
+
+	public int getWPSTrue() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}true");
+	}
+
+	public int getWPSFalse() {
+		return getExtensionCount("{http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/}false");
+	}
+	
 	public int getCountBasicActivities() {
 		return getCountAssign() + getCountCompensate() + getCountCompensateScope()
 				+ getCountEmpty() + getCountExit() + getCountInvoke() + getCountReceive()

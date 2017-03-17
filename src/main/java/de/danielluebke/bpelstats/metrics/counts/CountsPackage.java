@@ -65,7 +65,9 @@ public class CountsPackage extends StatisticsPackage {
 				"#WPSJavaCode",
 				"#WPSCustomProperty",
 				"#WPSDescription",
-				"#WPSDocumentation"
+				"#WPSDocumentation",
+				"#WPSTrue",
+				"#WPSFalse"
 		};
 	}
 
@@ -127,7 +129,9 @@ public class CountsPackage extends StatisticsPackage {
 				result.getCountWPSJavaCode(),
 				result.getCountWPSCustomProperty(),
 				result.getCountWPSDescription(),
-				result.getCountWPSDocumentation()
+				result.getCountWPSDocumentation(),
+				result.getWPSTrue(),
+				result.getWPSFalse()
 			};
 	}
 

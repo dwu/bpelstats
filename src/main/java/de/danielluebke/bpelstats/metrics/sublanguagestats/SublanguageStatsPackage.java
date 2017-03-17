@@ -36,6 +36,8 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 				"XQuery/Query/Total(LOCs)", "XQuery/Query/Total(Occurrences)",
 				"XQuery/External(LOCs)", "XQuery/Reuse(LOCs)",
 				"XQuery/Total(LOCs)", "XQuery/Complexity", "XSLT/Complexity",
+				"Java/LOCs",
+				"Java/Occurrences",
 				"Dependencies"
 		};
 	}
@@ -98,6 +100,8 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 			(total.xqueryExternalLOCs + total.xquerySimpleQueryLOCs + total.xqueryComplexQueryLOCs + total.xquerySimpleExpressionLOCs + total.xqueryComplexExpressionLOCs + total.xqueryReuseLOCs),
 			total.xqueryComplexity,
 			total.xsltComplexity, 
+			total.javaExpressionLOCs,
+			total.javaExpressionOccurrences,
 			importFiles
 		};
 	}
