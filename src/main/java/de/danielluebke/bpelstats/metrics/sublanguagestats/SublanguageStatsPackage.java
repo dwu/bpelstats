@@ -38,6 +38,7 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 				"XQuery/Total(LOCs)", "XQuery/Complexity", "XSLT/Complexity",
 				"Java/LOCs",
 				"Java/Occurrences",
+				"WPSBuiltIn/Occurrences",
 				"Dependencies"
 		};
 	}
@@ -102,6 +103,7 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 			total.xsltComplexity, 
 			total.javaExpressionLOCs,
 			total.javaExpressionOccurrences,
+			total.wpsBuiltInOccurences,
 			importFiles
 		};
 	}

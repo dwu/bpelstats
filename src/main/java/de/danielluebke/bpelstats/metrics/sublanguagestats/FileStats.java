@@ -28,6 +28,7 @@ public class FileStats {
 	public int xsltComplexity = 0;
 	public int javaExpressionLOCs = 0;
 	public int javaExpressionOccurrences = 0;
+	public int wpsBuiltInOccurences = 0;
 
 	@Override
 	public String toString() {
@@ -55,5 +56,6 @@ public class FileStats {
 		xsltComplexity += f.xsltComplexity;
 		javaExpressionLOCs += f.javaExpressionLOCs;
 		javaExpressionOccurrences += f.javaExpressionOccurrences;
+		wpsBuiltInOccurences += f.wpsBuiltInOccurences;
 	}
 }

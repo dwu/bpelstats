@@ -17,16 +17,21 @@ import es.uca.webservices.xquery.parser.util.XQueryParsingException;
 
 public class BPELSubLanguageParser extends DefaultHandler {
 
-	private static final String BPEL_URN_XQUERY = "urn:active-endpoints:expression-language:xquery1.0";
+	private static final List<String> BPEL_URN_XQUERY = Arrays.asList(
+			"urn:active-endpoints:expression-language:xquery1.0"
+		);
 	private static final List<String> BPEL_URN_XPATH = Arrays.asList(
-				"urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0", 
-				"http://www.w3.org/TR/1999/REC-xpath-19991116"
+			"urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0", 
+			"http://www.w3.org/TR/1999/REC-xpath-19991116"
 		);
 	private static final List<String> URN_JAVA = Arrays.asList(
 			"urn:bpelstats:java", 
 			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/"
 		);
-
+	private static final List<String> URN_WPSBUILTIN = Arrays.asList(
+			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/built-in/6.0.0/"
+		);
+	
 	private static final String NAMESPACE_PROCESSSERVER = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
 	
 	private File baseDirectory;
@@ -65,8 +70,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private int xpathExpressionOccurrences = 0;
 	private int xqueryComplexityQuery = 0;
 	private int xqueryComplexityExpression = 0;
-	private int javaExpressionOccurrences;
-	private int javaExpressionLOCs;
+	private int javaExpressionOccurrences = 0;
+	private int javaExpressionLOCs = 0;
+	private int wpsBuiltInOccurences = 0;
 	private String bpelNamespace;
 	
 	public BPELSubLanguageParser(File baseDirectory) {
@@ -194,7 +200,10 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		if(currentFragment != null) {
 			currentFragment.fragment = textContent.toString();
 		
-			if(currentFragment.fragment == null || "".trim().equals(currentFragment.fragment)) {
+			if(
+				(currentFragment.fragment == null || "".trim().equals(currentFragment.fragment)) &&
+				!URN_WPSBUILTIN.contains(currentFragment.language)
+				) {
 				expressionFragments.remove(currentFragment);
 				queryFragments.remove(currentFragment);
 			}
@@ -220,7 +229,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			if(BPEL_URN_XPATH.contains(lf.language)) {
 				xpathQueryOccurrences++;
 				xpathQueryLOCs += calculateLOC(lf);
-			} else if(BPEL_URN_XQUERY.equals(lf.language)) {
+			} else if(BPEL_URN_XQUERY.contains(lf.language)) {
 				try {
 					xqueryParser.parse(lf.fragment);
 				} catch (XQueryParsingException e) {
@@ -236,6 +245,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 					xquerySimpleQueryOccurrences++;
 					xquerySimpleQueryLOCs += loc;
 				}
+			} else {
+				System.err.println(lf.language + " not found!");
 			}
 		}
 		
@@ -243,7 +254,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			if(BPEL_URN_XPATH.contains(lf.language)) {
 				xpathExpressionOccurrences++;
 				xpathExpressionLOCs += calculateLOC(lf);
-			} else if(BPEL_URN_XQUERY.equals(lf.language)) {
+			} else if(BPEL_URN_XQUERY.contains(lf.language)) {
 				try {
 					xqueryParser.parse(lf.fragment);
 				} catch (XQueryParsingException e) {
@@ -262,8 +273,11 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			} else if(URN_JAVA.contains(lf.language)) {
 				javaExpressionOccurrences ++;
 				javaExpressionLOCs += calculateLOC(lf);
-			} else
+			} else if(URN_WPSBUILTIN.contains(lf.language)) {
+				this.wpsBuiltInOccurences++;
+			} else {
 				System.err.println(lf.language + " not found!");
+			}
 		}
 	}
 
@@ -279,12 +293,16 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private void removeEmptyFragments() {
 		List<LanguageFragment> fragmentsToDelete = new ArrayList<LanguageFragment>();
 		for(LanguageFragment f : queryFragments) {
-			if(f.fragment == null || "".equals(f.fragment.trim())) {
+			if((f.fragment == null || "".equals(f.fragment.trim())) && 
+					!(URN_WPSBUILTIN.contains(f.language))
+				) {
 				fragmentsToDelete.add(f);
 			}
 		}
 		for(LanguageFragment f : expressionFragments) {
-			if(f.fragment == null || "".equals(f.fragment.trim())) {
+			if((f.fragment == null || "".equals(f.fragment.trim())) && 
+					!(URN_WPSBUILTIN.contains(f.language))
+				) {
 				fragmentsToDelete.add(f);
 			}
 		}
@@ -365,5 +383,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 
 	public int getJavaExpressionLOCs() {
 		return javaExpressionLOCs;
+	}
+	
+	public int getWpsBuiltInOccurences() {
+		return wpsBuiltInOccurences;
 	}
 }
