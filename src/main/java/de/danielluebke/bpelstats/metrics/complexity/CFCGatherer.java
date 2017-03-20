@@ -42,7 +42,7 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 		public boolean isNode(QName n) {
 			return isNode(n.getLocalPart(), n.getNamespaceURI());
 		}
-		
+
 		@Override
 		public String toString() {
 			return name;
@@ -53,6 +53,7 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 	private GraphNode currentNode;
 	private Stack<GraphNode> stack;
 	private int isInHandlerDepth;
+	private BPELConstants bpelConstants;
 
 	@Override
 	public void startDocument() throws SAXException {
@@ -60,28 +61,31 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 		currentNode = null;
 		stack = new Stack<GraphNode>();
 		isInHandlerDepth = 0;
+		bpelConstants = null;
 	}
-	
-	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
 
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+		if(bpelConstants == null) {
+			bpelConstants = new BPELConstants(uri);
+		}
+		
 		if (isInHandlerDepth > 0) {
 			isInHandlerDepth++;
 			return;
 		}
 
-		if (BPELConstants.BPEL_NAMESPACE.equals(uri)) {
+		if (bpelConstants.bpelNamespace.equals(uri)) {
 			QName element = new QName(uri, localName);
 			if ("process".equals(localName)) {
-				process = new GraphNode(localName, BPELConstants.BPEL_NAMESPACE);
+				process = new GraphNode(localName, uri);
 				currentNode = process;
 				stack.push(process);
-			} else if (BPELConstants.BASIC_ACTIVITIES.contains(element)
-					|| BPELConstants.STRUCTURED_ACTIVITIES.contains(element)
-					|| BPELConstants.LINK.equals(element)) {
+			} else if (bpelConstants.basicActivities.contains(element)
+					|| bpelConstants.structuredActivities.contains(element) || bpelConstants.link.equals(element)) {
 				createNewNode(uri, localName);
-			} else if (BPELConstants.HANDLERS.contains(element)) {
+			} else if (bpelConstants.handlers.contains(element)) {
 				isInHandlerDepth = Math.max(isInHandlerDepth, 1);
 			}
 		}
@@ -95,8 +99,7 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 	}
 
 	@Override
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (isInHandlerDepth > 0) {
 			isInHandlerDepth--;
 		}
@@ -120,32 +123,32 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 		}
 	}
 
-	private static double getValue(GraphNode g) {
-		if (BPELConstants.BASIC_ACTIVITIES.contains(g.getQName())) {
+	private double getValue(GraphNode g) {
+		if (bpelConstants.basicActivities.contains(g.getQName())) {
 			return 1.0;
 		}
 
-		if (BPELConstants.SEQUENCE.equals(g.getQName()) || BPELConstants.PROCESS.equals(g.getQName())) {
+		if (bpelConstants.sequence.equals(g.getQName()) || bpelConstants.process.equals(g.getQName())) {
 			return getCFCOfChildren(g);
 		}
 
-		if (BPELConstants.IF.equals(g.getQName())) {
+		if (bpelConstants._if.contains(g.getQName())) {
 			return g.children.size() * getCFCOfChildren(g);
 		}
 
-		if (BPELConstants.WHILE.equals(g.getQName())) {
+		if (bpelConstants._while.equals(g.getQName())) {
 			double innerCFC = getCFCOfChildren(g);
 			return (Math.log(innerCFC + 2.0) / Math.log(2)) * innerCFC;
 		}
 
-		if (BPELConstants.FLOW.equals(g.getQName())) {
+		if (bpelConstants.flow.contains(g.getQName())) {
 			int linkCount = countLinks(g);
 			// 2 * linkCount because links are children in this model
-			double fac = fac(g.children.size() - 2 * linkCount); 
+			double fac = fac(g.children.size() - 2 * linkCount);
 			return fac * getCFCOfChildren(g);
 		}
 
-		if (BPELConstants.PICK.equals(g.getQName())) {
+		if (bpelConstants.pick.equals(g.getQName())) {
 			double exp = exp2(g.children.size()) - 1;
 			return exp * getCFCOfChildren(g);
 		}
@@ -158,10 +161,10 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 	}
 
 	private static double fac(long n) {
-		if(n < 0) {
+		if (n < 0) {
 			throw new RuntimeException("Faculty of " + n + " is not valid");
 		}
-		
+
 		double result = 1.0;
 		for (int i = 2; i <= n; i++) {
 			result *= i;
@@ -170,17 +173,17 @@ public class CFCGatherer extends BPELComplexityMetricGatherer {
 		return result;
 	}
 
-	private static int countLinks(GraphNode g) {
+	private int countLinks(GraphNode g) {
 		int result = 0;
 		for (GraphNode c : g.children) {
-			if (c.isNode(BPELConstants.LINK)) {
+			if (c.isNode(bpelConstants.link)) {
 				result++;
 			}
 		}
 		return result;
 	}
 
-	private static double getCFCOfChildren(GraphNode g) {
+	private double getCFCOfChildren(GraphNode g) {
 		double result = 0.0;
 		for (GraphNode c : g.children) {
 			result += getValue(c);

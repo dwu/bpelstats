@@ -14,22 +14,29 @@ public class FIGatherer extends BPELComplexityMetricGatherer {
 	private int fi = 0;
 	private int pickLevel = 0;
 	private boolean searchForOnMessageInCreateInstancePick = false;
+	private String bpelNamespace;
 	
 	@Override
 	public void startDocument() throws SAXException {
 		fi = 0;
 		pickLevel = 0;
 		searchForOnMessageInCreateInstancePick = false;
+		bpelNamespace = null;
 	}
 	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
+		
+		if(bpelNamespace == null) {
+			bpelNamespace = uri;
+		}
+		
 		if(searchForOnMessageInCreateInstancePick) {
 			pickLevel++;
 		}
 		
-		if(BPELConstants.BPEL_NAMESPACE.equals(uri)) {
+		if(bpelNamespace.equals(uri)) {
 			if("receive".equals(localName) && "yes".equals(attributes.getValue("createInstance"))) {
 				fi = 1;
 			}

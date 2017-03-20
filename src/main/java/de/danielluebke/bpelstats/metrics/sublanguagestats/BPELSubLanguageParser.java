@@ -18,18 +18,19 @@ import es.uca.webservices.xquery.parser.util.XQueryParsingException;
 public class BPELSubLanguageParser extends DefaultHandler {
 
 	private static final List<String> BPEL_URN_XQUERY = Arrays.asList(
-			"urn:active-endpoints:expression-language:xquery1.0"
+			"urn:active-endpoints:expression-language:xquery1.0",		// ActiveVOS
+			"urn:oasis:names:tc:wsbpel:2.0:sublang:xquery1.0"			// Apache ODE
 		);
 	private static final List<String> BPEL_URN_XPATH = Arrays.asList(
-			"urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0", 
-			"http://www.w3.org/TR/1999/REC-xpath-19991116"
+			"urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0", 			// WS-BPEL 2.0
+			"http://www.w3.org/TR/1999/REC-xpath-19991116"				// WPS
 		);
 	private static final List<String> URN_JAVA = Arrays.asList(
-			"urn:bpelstats:java", 
-			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/"
+			"urn:bpelstats:java", 																	// Generic
+			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/"	// WPS
 		);
 	private static final List<String> URN_WPSBUILTIN = Arrays.asList(
-			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/built-in/6.0.0/"
+			"http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/built-in/6.0.0/"	// WPS
 		);
 	
 	private static final String NAMESPACE_PROCESSSERVER = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
@@ -42,8 +43,12 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		QName elementName;
 	}
 	
-	private static final String[] XQUERY_IMPORT_TYPES = new String[] { "http://modules.active-endpoints.com/2009/07/xquery" };
-	private static final String[] XSLT_IMPORT_TYPES = new String[] { "http://www.w3.org/1999/XSL/Transform" };
+	private static final List<String> XQUERY_IMPORT_TYPES = Arrays.asList(
+			"http://modules.active-endpoints.com/2009/07/xquery"
+		);
+	private static final List<String> XSLT_IMPORT_TYPES = Arrays.asList(
+			"http://www.w3.org/1999/XSL/Transform"
+		);
 	
 	private StringBuilder textContent = new StringBuilder();
 	private String defaultQueryLanguage;
@@ -83,7 +88,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		textContent = new StringBuilder();
 		defaultQueryLanguage = BPEL_URN_XPATH.get(0);
-		defaultExpressionLanguage = BPEL_URN_XPATH.get(0);
+		defaultExpressionLanguage = defaultQueryLanguage;
 		imports.clear();
 		queryFragments.clear();
 		expressionFragments.clear();
@@ -117,7 +122,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		
 		if(bpelNamespace.equals(uri) && localName.equals("import")) {
 			String type = attributes.getValue("importType");
-			if(Arrays.asList(XQUERY_IMPORT_TYPES).contains(type)) {
+			if(XQUERY_IMPORT_TYPES.contains(type)) {
 				Import i = new Import();
 				i.importType = "XQUERY";
 				try {
@@ -128,7 +133,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 				imports.add(i);
 			}
 			
-			if(Arrays.asList(XSLT_IMPORT_TYPES).contains(type)) {
+			if(XSLT_IMPORT_TYPES.contains(type)) {
 				Import i = new Import();
 				i.importType = "XSLT";
 				i.location = new File(baseDirectory, attributes.getValue("location"));

@@ -15,10 +15,12 @@ import org.xml.sax.SAXException;
 public class NOACGatherer extends BPELComplexityMetricGatherer {
 
 	private int noac = 0;
+	private BPELConstants bpelConstants;
 
 	@Override
 	public void startDocument() throws SAXException {
 		noac = 0;
+		bpelConstants = null;
 	}
 	
 	@Override
@@ -26,8 +28,12 @@ public class NOACGatherer extends BPELComplexityMetricGatherer {
 			Attributes attributes) throws SAXException {
 		QName elementName = new QName(uri, localName);
 
-		if (BPELConstants.BASIC_ACTIVITIES.contains(elementName)
-				|| BPELConstants.STRUCTURED_ACTIVITIES.contains(elementName)) {
+		if(bpelConstants == null) {
+			bpelConstants = new BPELConstants(uri);
+		}
+		
+		if (bpelConstants.basicActivities.contains(elementName)
+				|| bpelConstants.structuredActivities.contains(elementName)) {
 			noac++;
 		}
 	}

@@ -8,51 +8,67 @@ import javax.xml.namespace.QName;
 
 public class BPELConstants {
 
-	public static final String BPEL_NAMESPACE = "http://docs.oasis-open.org/wsbpel/2.0/process/executable";
-	public static final List<QName> BASIC_ACTIVITIES;
-	public static final List<QName> STRUCTURED_ACTIVITIES;
-	public static final List<QName> HANDLERS;
-	public static final QName LINK = new QName(BPEL_NAMESPACE, "link");
-	public static final QName SEQUENCE = new QName(BPEL_NAMESPACE, "sequence");
-	public static final QName IF = new QName(BPEL_NAMESPACE, "if");
-	public static final QName WHILE = new QName(BPEL_NAMESPACE, "while");
-	public static final QName FLOW = new QName(BPEL_NAMESPACE, "flow");
-	public static final QName PICK = new QName(BPEL_NAMESPACE, "pick");
-	public static final QName PROCESS = new QName(BPEL_NAMESPACE, "process");
+	public final String bpelNamespace; // = "http://docs.oasis-open.org/wsbpel/2.0/process/executable";
+	public final List<QName> basicActivities;
+	public final List<QName> structuredActivities;
+	public final List<QName> handlers;
+	public final QName link;
+	public final QName sequence;
+	public final List<QName> _if;
+	public final QName _while;
+	public final List<QName> flow;
+	public final QName pick;
+	public final QName process;
 	
-	static {
-		List<QName> basicActivities = new ArrayList<QName>();
-		basicActivities.add(new QName(BPEL_NAMESPACE, "assign"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "invoke"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "receive"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "reply"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "throw"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "rethrow"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "exit"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "empty"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "extensionActivity"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "validate"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "wait"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "compensate"));
-		basicActivities.add(new QName(BPEL_NAMESPACE, "compensateScope"));
-		BASIC_ACTIVITIES = Collections.unmodifiableList(basicActivities);
+	public BPELConstants(String bpelNamespace) {
+		this.bpelNamespace = bpelNamespace; 
 		
-		List<QName> structuredActivities = new ArrayList<QName>();
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "sequence"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "if"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "while"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "forEach"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "flow"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "repeatUntil"));
-		structuredActivities.add(new QName(BPEL_NAMESPACE, "pick"));
-		STRUCTURED_ACTIVITIES = Collections.unmodifiableList(structuredActivities);
+		link = new QName(bpelNamespace, "link");
+		sequence = new QName(bpelNamespace, "sequence");
+		_while = new QName(bpelNamespace, "while");
+		pick = new QName(bpelNamespace, "pick");
+		process = new QName(bpelNamespace, "process");
 		
-		List<QName> handlers = new ArrayList<QName>();
-		handlers.add(new QName(BPEL_NAMESPACE, "compensationHandler"));
-		handlers.add(new QName(BPEL_NAMESPACE, "faultHandlers"));
-		handlers.add(new QName(BPEL_NAMESPACE, "terminationHandler"));
-		handlers.add(new QName(BPEL_NAMESPACE, "eventHandlers"));
-		HANDLERS = Collections.unmodifiableList(handlers);
+		List<QName> __if = new ArrayList<>();
+		__if.add(new QName(bpelNamespace, "if"));
+		__if.add(new QName(bpelNamespace, "switch"));
+		_if = Collections.unmodifiableList(__if);
+		
+		List<QName> _flow = new ArrayList<>();
+		_flow.add(new QName(bpelNamespace, "flow"));
+		flow = Collections.unmodifiableList(_flow);
+		
+		List<QName> _basicActivities = new ArrayList<QName>();
+		_basicActivities.add(new QName(bpelNamespace, "assign"));
+		_basicActivities.add(new QName(bpelNamespace, "invoke"));
+		_basicActivities.add(new QName(bpelNamespace, "receive"));
+		_basicActivities.add(new QName(bpelNamespace, "reply"));
+		_basicActivities.add(new QName(bpelNamespace, "throw"));
+		_basicActivities.add(new QName(bpelNamespace, "rethrow"));
+		_basicActivities.add(new QName(bpelNamespace, "exit"));
+		_basicActivities.add(new QName(bpelNamespace, "empty"));
+		_basicActivities.add(new QName(bpelNamespace, "extensionActivity"));
+		_basicActivities.add(new QName(bpelNamespace, "validate"));
+		_basicActivities.add(new QName(bpelNamespace, "wait"));
+		_basicActivities.add(new QName(bpelNamespace, "compensate"));
+		_basicActivities.add(new QName(bpelNamespace, "compensateScope"));
+		basicActivities = Collections.unmodifiableList(_basicActivities);
+		
+		List<QName> _structuredActivities = new ArrayList<QName>();
+		_structuredActivities.add(new QName(bpelNamespace, "sequence"));
+		_structuredActivities.add(new QName(bpelNamespace, "if"));
+		_structuredActivities.add(new QName(bpelNamespace, "while"));
+		_structuredActivities.add(new QName(bpelNamespace, "forEach"));
+		_structuredActivities.addAll(flow);
+		_structuredActivities.add(new QName(bpelNamespace, "repeatUntil"));
+		_structuredActivities.add(new QName(bpelNamespace, "pick"));
+		structuredActivities = Collections.unmodifiableList(_structuredActivities);
+		
+		List<QName> _handlers = new ArrayList<QName>();
+		_handlers.add(new QName(bpelNamespace, "compensationHandler"));
+		_handlers.add(new QName(bpelNamespace, "faultHandlers"));
+		_handlers.add(new QName(bpelNamespace, "terminationHandler"));
+		_handlers.add(new QName(bpelNamespace, "eventHandlers"));
+		handlers = Collections.unmodifiableList(_handlers);
 	}
-	
 }

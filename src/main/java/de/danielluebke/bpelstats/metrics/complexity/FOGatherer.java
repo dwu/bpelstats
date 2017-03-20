@@ -12,16 +12,23 @@ import org.xml.sax.SAXException;
 public class FOGatherer extends BPELComplexityMetricGatherer {
 
 	private int fo = 0;
+	private String bpelNamespace;
 	
 	@Override
 	public void startDocument() throws SAXException {
 		fo = 0;
+		bpelNamespace = null;
 	}
 	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		if(BPELConstants.BPEL_NAMESPACE.equals(uri) && localName.equals("invoke")) {
+		
+		if(bpelNamespace == null) {
+			bpelNamespace = uri;
+		}
+		
+		if(bpelNamespace.equals(uri) && localName.equals("invoke")) {
 			String operationName = attributes.getValue("operation").toLowerCase();
 			if(!operationName.endsWith("callback") || !operationName.endsWith("failure")) {
 				fo++;

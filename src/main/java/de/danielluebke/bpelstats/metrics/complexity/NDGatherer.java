@@ -15,23 +15,30 @@ public class NDGatherer extends BPELComplexityMetricGatherer {
 
 	private int nd = 0;
 	private int currentLevel = 0;
+	private BPELConstants bpelConstants;
 	
 	@Override
 	public void startDocument() throws SAXException {
 		nd = 0;
 		currentLevel = 0;
+		bpelConstants = null;
 	}
 	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
+		
+		if(bpelConstants == null) {
+			bpelConstants = new BPELConstants(uri);
+		}
+		
 		QName elementName = new QName(uri, localName);
 
-		if(BPELConstants.STRUCTURED_ACTIVITIES.contains(elementName)) {
+		if(bpelConstants.structuredActivities.contains(elementName)) {
 			currentLevel++;
 		}
 		
-		if (BPELConstants.BASIC_ACTIVITIES.contains(elementName)) {
+		if (bpelConstants.basicActivities.contains(elementName)) {
 			nd = Math.max(nd, currentLevel);
 		}
 	}
@@ -41,7 +48,7 @@ public class NDGatherer extends BPELComplexityMetricGatherer {
 			throws SAXException {
 		QName elementName = new QName(uri, localName);
 
-		if(BPELConstants.STRUCTURED_ACTIVITIES.contains(elementName)) {
+		if(bpelConstants.structuredActivities.contains(elementName)) {
 			currentLevel--;
 		}
 	}
