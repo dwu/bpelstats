@@ -8,6 +8,8 @@ import javax.xml.namespace.QName;
 
 public class BPELConstants {
 
+	public final String NAMESPACE_WPC = "http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/";
+	
 	public final String bpelNamespace; // = "http://docs.oasis-open.org/wsbpel/2.0/process/executable";
 	public final List<QName> basicActivities;
 	public final List<QName> structuredActivities;
@@ -36,6 +38,7 @@ public class BPELConstants {
 		
 		List<QName> _flow = new ArrayList<>();
 		_flow.add(new QName(bpelNamespace, "flow"));
+		_flow.add(new QName(NAMESPACE_WPC, "flow"));
 		flow = Collections.unmodifiableList(_flow);
 		
 		List<QName> _basicActivities = new ArrayList<QName>();
@@ -56,7 +59,8 @@ public class BPELConstants {
 		
 		List<QName> _structuredActivities = new ArrayList<QName>();
 		_structuredActivities.add(new QName(bpelNamespace, "sequence"));
-		_structuredActivities.add(new QName(bpelNamespace, "if"));
+		_structuredActivities.addAll(_if);
+		_structuredActivities.add(new QName(bpelNamespace, "switch"));
 		_structuredActivities.add(new QName(bpelNamespace, "while"));
 		_structuredActivities.add(new QName(bpelNamespace, "forEach"));
 		_structuredActivities.addAll(flow);
