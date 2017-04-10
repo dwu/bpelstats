@@ -77,6 +77,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private int xqueryComplexityExpression = 0;
 	private int javaExpressionOccurrences = 0;
 	private int javaExpressionLOCs = 0;
+	private int javaExpressionSLOCs = 0;
 	private int wpsBuiltInOccurences = 0;
 	private String bpelNamespace;
 	
@@ -278,6 +279,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			} else if(URN_JAVA.contains(lf.language)) {
 				javaExpressionOccurrences ++;
 				javaExpressionLOCs += calculateLOC(lf);
+				javaExpressionSLOCs += calculateSLOC(lf);
 			} else if(URN_WPSBUILTIN.contains(lf.language)) {
 				this.wpsBuiltInOccurences++;
 			} else {
@@ -322,6 +324,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		return LOCCalculator.calculateLOC(f.fragment);
 	}
 	
+	private int calculateSLOC(LanguageFragment f) {
+		return LOCCalculator.calculateSLOC(f.fragment);
+	}
 
 	public List<Import> getImports() {
 		return Collections.unmodifiableList(imports);
@@ -388,6 +393,10 @@ public class BPELSubLanguageParser extends DefaultHandler {
 
 	public int getJavaExpressionLOCs() {
 		return javaExpressionLOCs;
+	}
+	
+	public int getJavaExpressionSLOCs() {
+		return javaExpressionSLOCs;
 	}
 	
 	public int getWpsBuiltInOccurences() {
