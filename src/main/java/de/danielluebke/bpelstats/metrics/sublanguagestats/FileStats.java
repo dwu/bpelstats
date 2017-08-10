@@ -27,6 +27,7 @@ public class FileStats {
 	public int xqueryComplexity = 0;
 	public int xsltComplexity = 0;
 	public int javaExpressionLOCs = 0;
+	public int javaExpressionSLOCs = 0;
 	public int javaExpressionOccurrences = 0;
 	public int wpsBuiltInOccurences = 0;
 
@@ -55,6 +56,7 @@ public class FileStats {
 		xqueryComplexity += f.xqueryComplexity;
 		xsltComplexity += f.xsltComplexity;
 		javaExpressionLOCs += f.javaExpressionLOCs;
+		javaExpressionSLOCs += f.javaExpressionSLOCs;
 		javaExpressionOccurrences += f.javaExpressionOccurrences;
 		wpsBuiltInOccurences += f.wpsBuiltInOccurences;
 	}
