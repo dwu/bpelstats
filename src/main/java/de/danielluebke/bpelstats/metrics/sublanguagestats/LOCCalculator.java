@@ -29,27 +29,24 @@ public class LOCCalculator {
 			if("".equals(l))
 				continue;
 			
-			if(l.startsWith("/*")) {
+			if(l.contains("/*")) {
 				inComment = true;
 				if (l.contains("*/")) {
 					inComment = false;
-					if (!l.endsWith("*/")) {
-						slocCount++;
-					}
+				}
+				if (!(l.startsWith("/*") && (!l.contains("*/") || l.endsWith("*/")))) {
+					slocCount++;
 				}
 				continue;
 			}
-			if(l.endsWith("*/")) {
-				if (!l.startsWith("/*") && !inComment) {
+			if(l.contains("*/")) {
+				if (!l.endsWith("/*") && !inComment) {
 					slocCount++;
 				}
 				inComment = false;
 				continue;
 			}
-			if(inComment)
-				continue;
-
-			if(l.startsWith("//"))
+			if(inComment || l.startsWith("//"))
 				continue;
 
 			// else
