@@ -30,6 +30,9 @@ public class FileStats {
 	public int javaExpressionSLOCs = 0;
 	public int javaExpressionOccurrences = 0;
 	public int wpsBuiltInOccurences = 0;
+	public HalsteadMetrics xpathHalstead = new HalsteadMetrics();
+	public HalsteadMetrics xsltHalstead = new HalsteadMetrics();
+	public HalsteadMetrics xqueryHalstead = new HalsteadMetrics();
 
 	@Override
 	public String toString() {
@@ -59,5 +62,8 @@ public class FileStats {
 		javaExpressionSLOCs += f.javaExpressionSLOCs;
 		javaExpressionOccurrences += f.javaExpressionOccurrences;
 		wpsBuiltInOccurences += f.wpsBuiltInOccurences;
+		xpathHalstead.add(f.xpathHalstead);
+		xsltHalstead.add(f.xsltHalstead);
+		xqueryHalstead.add(f.xqueryHalstead);
 	}
 }

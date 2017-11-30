@@ -38,6 +38,7 @@ public class BpelSubLanguageStatsGatherer {
 		bpelFileStats.xqueryComplexQueryLOCs = handler.getXQueryComplexQueryLOCs();
 		bpelFileStats.xpathExpressionsLOCs = handler.getXPathExpressionLOCs();
 		bpelFileStats.xpathQueriesLOCs = handler.getXPathQueryLOCs();
+		bpelFileStats.xpathHalstead = handler.getXPathHalsteadMetrics();
 		bpelFileStats.xquerySimpleExpressionOccurrences = handler.getXQuerySimpleExpressionOccurrences();
 		bpelFileStats.xqueryComplexExpressionOccurrences = handler.getXQueryComplexExpressionOccurrences();
 		bpelFileStats.xquerySimpleQueryOccurrences = handler.getXQuerySimpleQueryOccurrences();
@@ -68,6 +69,7 @@ public class BpelSubLanguageStatsGatherer {
 						xsltFileStats.xsltExternalLOCs = calculateLOCs(xsltFileStats.absoluteFileName);
 					}
 					xsltFileStats.xsltComplexity = xsltSubLangauageStats.getComplexity();
+					xsltFileStats.xsltHalstead = xsltSubLangauageStats.getHalsteadMetrics();
 					fileStats.add(xsltFileStats);
 				} else if(imp.importType.equals("XQUERY")) {
 					FileStats xqueryFileStats = new FileStats();
@@ -84,6 +86,7 @@ public class BpelSubLanguageStatsGatherer {
 					}
 					remainingImports.addAll(getXQueryImports(xqueryFileStats.absoluteFileName));
 					xqueryFileStats.xqueryComplexity = xqueryParser.getComplexity();
+					xqueryFileStats.xqueryHalstead = xqueryParser.getHalsteadMetrics();
 					fileStats.add(xqueryFileStats);
 				}
 				processedImports.add(imp);

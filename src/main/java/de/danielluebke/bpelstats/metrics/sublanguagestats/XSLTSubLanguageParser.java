@@ -19,6 +19,7 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 
 	private List<Import> imports = new ArrayList<Import>();
 	private int complexity = 0;
+	private XSLTHalsteadMetricsCalculator halsteadCalculator = new XSLTHalsteadMetricsCalculator();
 
 	private File baseDirectory;
 	
@@ -30,12 +31,15 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		imports.clear();
 		complexity = 0;
+		halsteadCalculator.startDocument();
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
 
+		halsteadCalculator.startElement(uri, localName, qName, attributes);
+		
 		if (!XSLT_NAMESPACE.equals(uri)) return;
 		
 		if (localName.equals("import")) {
@@ -53,6 +57,11 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 			complexity++;
 		}
 	}
+	
+	@Override
+	public void endDocument() throws SAXException {
+		halsteadCalculator.endDocument();
+	}
 
 	public List<? extends Import> getImports() {
 		return Collections.unmodifiableList(imports);
@@ -60,5 +69,9 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 	
 	public int getComplexity() {
 		return complexity;
+	}
+
+	public HalsteadMetrics getHalsteadMetrics() {
+		return halsteadCalculator.getHalsteadMetrics();
 	}
 }

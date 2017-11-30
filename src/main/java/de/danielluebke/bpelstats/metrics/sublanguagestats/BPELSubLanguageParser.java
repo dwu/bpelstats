@@ -81,6 +81,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private int wpsBuiltInOccurences = 0;
 	private String bpelNamespace;
 	
+	private XPathHalsteadMetricsCalculator xpathHalsteadCalculator = null;
+	private HalsteadMetrics xqueryHalsteadMetrics;
+	
 	public BPELSubLanguageParser(File baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
@@ -99,6 +102,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		xpathExpressionLOCs = 0;
 		xqueryComplexityQuery = 0;
 		xqueryComplexityExpression = 0;
+		
+		xpathHalsteadCalculator = new XPathHalsteadMetricsCalculator();
+		xqueryHalsteadMetrics = new HalsteadMetrics();
 	}
 	
 	@Override
@@ -235,6 +241,12 @@ public class BPELSubLanguageParser extends DefaultHandler {
 			if(BPEL_URN_XPATH.contains(lf.language)) {
 				xpathQueryOccurrences++;
 				xpathQueryLOCs += calculateLOC(lf);
+				try {
+					xpathHalsteadCalculator.parse(lf.fragment);
+				} catch (XQueryParsingException e) {
+					
+				}
+				
 			} else if(BPEL_URN_XQUERY.contains(lf.language)) {
 				try {
 					xqueryParser.parse(lf.fragment);
@@ -251,6 +263,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 					xquerySimpleQueryOccurrences++;
 					xquerySimpleQueryLOCs += loc;
 				}
+				xqueryHalsteadMetrics.add(xqueryParser.getHalsteadMetrics());
 			} else {
 				System.err.println(lf.language + " not found!");
 			}
@@ -401,5 +414,13 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	
 	public int getWpsBuiltInOccurences() {
 		return wpsBuiltInOccurences;
+	}
+	
+	public HalsteadMetrics getXPathHalsteadMetrics() {
+		return xpathHalsteadCalculator.getHalsteadMetrics();
+	}
+	
+	public HalsteadMetrics getXQueryHalsteadMetrics() {
+		return xqueryHalsteadMetrics;
 	}
 }
