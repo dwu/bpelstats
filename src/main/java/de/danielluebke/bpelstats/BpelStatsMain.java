@@ -32,6 +32,7 @@ public final class BpelStatsMain {
 	private boolean isPrintHeader;
 	private boolean isDoAnonymization;
 	private boolean isDoPseudoAnonymization;
+	private boolean isProcessIndirectImports;
 	private boolean isModeSublanguageStatistics;
 	private boolean isModeComplexityMetrics;
 	private boolean isModeExtensions;
@@ -89,6 +90,7 @@ public final class BpelStatsMain {
 			mainStrategy.setDoAnonymization(isDoAnonymization);
 			mainStrategy.setDoPseudoAnonymization(isDoPseudoAnonymization);
 			mainStrategy.setPrintHeader(isPrintHeader);
+			mainStrategy.setImportAll(isProcessIndirectImports);
 			mainStrategy.setWriter(out);
 			
 			mainStrategy.runStatistics();
@@ -116,6 +118,7 @@ public final class BpelStatsMain {
 		isDoAnonymization = cmd.hasOption('a');
 		isDoPseudoAnonymization = cmd.hasOption('p');
 		reuseDirectories = cmd.getOptionValue("reusedir");
+		isProcessIndirectImports = cmd.hasOption('i');
 		
 		isModeSublanguageStatistics = cmd.hasOption('s');
 		isModeComplexityMetrics = cmd.hasOption('c');
@@ -186,6 +189,10 @@ public final class BpelStatsMain {
 				.withDescription("Use a custom delimiter (default=" + DEFAULT_SEPARATOR + ")")
 				.withArgName("delimiter").hasArg().create("d"));
 
+		options.addOption(OptionBuilder
+				.withDescription("Consider all files found in subdirectories of the BPEL process as indirect imports for sublanguage stats (requires -s)")
+				.create("i"));
+		
 		return options;
 	}
 

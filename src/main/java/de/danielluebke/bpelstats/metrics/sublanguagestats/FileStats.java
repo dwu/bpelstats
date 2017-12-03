@@ -7,6 +7,7 @@ public class FileStats {
 	public File absoluteFileName;
 	
 	public String fileType;
+	public boolean direct = true;
 	
 	public int xquerySimpleExpressionLOCs;
 	public int xquerySimpleQueryLOCs;

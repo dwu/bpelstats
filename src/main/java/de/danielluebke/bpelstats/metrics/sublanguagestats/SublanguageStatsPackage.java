@@ -107,13 +107,16 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 				"Java/Halstead/Effort",
 				"Java/Halstead/Effort(s)",
 				"Java/Halstead/EstimatedBugs(Modern)",
-				"Dependencies"
+				"Dependencies",
+				"IndirectDependencies"
 		};
 	}
 
 	@Override
 	protected Object[] calculateStatistic(String bpelFilename) throws Exception {
 		BpelSubLanguageStatsGatherer gatherer = new BpelSubLanguageStatsGatherer();
+		gatherer.setProcessIndirectImports(isProcessIndirectImports);
+		
 		File bpelFile = new File(bpelFilename);
 
 		String[] reuseDirs;
@@ -125,21 +128,25 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 		List<FileStats> sublanguageResults = gatherer.gather(bpelFile,
 				reuseDirs);
 		StringBuilder importFiles = new StringBuilder();
-
+		StringBuilder indirectImportFiles = new StringBuilder();
+		
 		FileStats total = new FileStats();
 		for (FileStats fs : sublanguageResults) {
 			total.add(fs);
-			if (importFiles.length() > 0) {
-				importFiles.append(getSecondaryDelimiter());
-			}
-
+			
 			String path = getRelativePath(
 					fs.absoluteFileName.getCanonicalPath(), bpelFile
 							.getParentFile().getCanonicalPath());
 			if (path.indexOf("..") >= 0) {
 				path = path.substring(path.indexOf(".."));
 			}
-			importFiles.append(anonymizeFilenameIfNecessary(path));
+			if (fs.direct) {
+				importFiles.append(anonymizeFilenameIfNecessary(path));
+				importFiles.append(getSecondaryDelimiter());
+			} else {
+				indirectImportFiles.append(anonymizeFilenameIfNecessary(path));
+				indirectImportFiles.append(getSecondaryDelimiter());
+			}
 		}
 
 		return new Object[] {
@@ -231,7 +238,8 @@ public class SublanguageStatsPackage extends StatisticsPackage {
 			total.javaHalstead.getEffort(),
 			total.javaHalstead.getEstimatedEffortInSeconds(),
 			total.javaHalstead.getModernEstimatedBugs(),	
-			importFiles
+			importFiles,
+			indirectImportFiles
 		};
 	}
 

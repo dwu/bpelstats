@@ -5,6 +5,7 @@ import java.io.File;
 public class Import {
 	File location;
 	String importType;
+	boolean direct = true;
 	
 	@Override
 	public String toString() {

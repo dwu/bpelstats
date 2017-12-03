@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,15 +20,27 @@ import org.xml.sax.XMLReader;
 
 import es.uca.webservices.xquery.parser.util.XQueryParsingException;
 
+/**
+ * @author wu
+ *
+ */
 public class BpelSubLanguageStatsGatherer {
 
+	private boolean processIndirectImports = false;
+	
 	public List<FileStats> gather(File bpelFile, String[] reusePaths) throws IOException, SAXException, ParserConfigurationException, XQueryParsingException {
 		BPELSubLanguageParser handler = getBpelSubLanguageStats(bpelFile);
-		
+
 		List<Import> remainingImports = new ArrayList<Import>();
 		List<Import> processedImports = new ArrayList<Import>();
 		List<FileStats> fileStats = new ArrayList<FileStats>();
 		remainingImports.addAll(handler.getImports());
+		
+		if (processIndirectImports) {
+			List<Import> indirectImports = getIndirectImports(bpelFile);
+			indirectImports.removeAll(remainingImports);
+			remainingImports.addAll(indirectImports);
+		}
 		
 		FileStats bpelFileStats = new FileStats();
 		bpelFileStats.fileType = "BPEL";
@@ -66,7 +79,7 @@ public class BpelSubLanguageStatsGatherer {
 			Import imp = remainingImports.remove(0);
 			if(!processedImports.contains(imp)) {
 				if(imp.importType.equals("XSLT")) {
-					XSLTSubLanguageParser xsltSubLanguageStats = getXsltSubLangauageStats(imp.location);
+					XSLTSubLanguageParser xsltSubLanguageStats = getXsltSubLanguageStats(imp.location);
 					remainingImports.addAll(xsltSubLanguageStats.getImports());
 					FileStats xsltFileStats = new FileStats();
 					xsltFileStats.fileType = "XSLT";
@@ -80,6 +93,8 @@ public class BpelSubLanguageStatsGatherer {
 					xsltFileStats.xsltNumConditions = xsltSubLanguageStats.getNumConditions();
 					xsltFileStats.xsltNumIterations = xsltSubLanguageStats.getNumIterations();
 					xsltFileStats.xsltHalstead = xsltSubLanguageStats.getHalsteadMetrics();
+					xsltFileStats.direct = imp.direct;
+					
 					fileStats.add(xsltFileStats);
 				} else if(imp.importType.equals("XQUERY")) {
 					FileStats xqueryFileStats = new FileStats();
@@ -97,6 +112,8 @@ public class BpelSubLanguageStatsGatherer {
 					remainingImports.addAll(getXQueryImports(xqueryFileStats.absoluteFileName));
 					xqueryFileStats.xqueryComplexity = xqueryParser.getComplexity();
 					xqueryFileStats.xqueryHalstead = xqueryParser.getHalsteadMetrics();
+					xqueryFileStats.direct = imp.direct;
+					
 					fileStats.add(xqueryFileStats);
 				} else if(imp.importType.equals("BOMAP")) {
 					BOMapSubLanguageParser boMapSubLanguageStats = getBOMapSubLanguageStats(imp.location);
@@ -109,7 +126,24 @@ public class BpelSubLanguageStatsGatherer {
 					boMapFileStats.boMapNumConditions = boMapSubLanguageStats.getNumConditions();
 					boMapFileStats.boMapNumIterations = boMapSubLanguageStats.getNumIterations();
 					boMapFileStats.bomapHalstead = boMapSubLanguageStats.getHalsteadMetrics();
+					boMapFileStats.direct = imp.direct;
+					
 					fileStats.add(boMapFileStats);
+				} else if (imp.importType.equals("JAVA")) {
+					JavaWPSSubLanguageParser javaParser = getJavaWPSSubLanguageStats(imp.location);
+					
+					FileStats javaFileStats = new FileStats();
+					javaFileStats.fileType = "JAVA";
+					javaFileStats.absoluteFileName = imp.location.getAbsoluteFile();
+					javaFileStats.javaLOCs = LOCCalculator.calculateLOC(FileUtils.readFileToString(imp.location));
+					javaFileStats.javaSLOCs = LOCCalculator.calculateJavaSLOC(FileUtils.readFileToString(imp.location));
+					javaFileStats.javaComplexity = javaParser.getComplexity();
+					javaFileStats.javaNumConditions = javaParser.getNumConditions();
+					javaFileStats.javaNumIterations = javaParser.getNumIterations();
+					javaFileStats.javaHalstead = javaParser.getHalsteadMetrics();
+					javaFileStats.direct = imp.direct;
+					
+				    fileStats.add(javaFileStats);
 				}
 				processedImports.add(imp);
 			}
@@ -188,7 +222,7 @@ public class BpelSubLanguageStatsGatherer {
 		}
 	}
 
-	private XSLTSubLanguageParser getXsltSubLangauageStats(File location) throws SAXException, ParserConfigurationException, IOException {
+	private XSLTSubLanguageParser getXsltSubLanguageStats(File location) throws SAXException, ParserConfigurationException, IOException {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setNamespaceAware(true);
 		SAXParser saxParser = spf.newSAXParser();
@@ -230,4 +264,49 @@ public class BpelSubLanguageStatsGatherer {
 		
 		return javaParser;
 	}
+	
+	
+	/**
+	 * Returns a list of indirect dependencies, i.e. files with an extension of ".xsl", ".map", ".java"
+	 * located in the directory or a sub-directory of the BPEL file.
+	 * 
+	 * @param location
+	 * @return
+	 */
+	private List<Import> getIndirectImports(File location) {
+		List<Import> imports = new ArrayList<Import>();
+		
+		@SuppressWarnings("unchecked")
+		Iterator<File> candidates = (Iterator<File>) FileUtils.iterateFiles(location.getParentFile(), new String[] { "java", "map" }, true);
+		
+		while (candidates.hasNext()) {
+			File candidate = candidates.next();
+			
+			Import i = new Import();
+			i.location = candidate;
+			i.direct = false;
+
+			if (candidate.getName().endsWith(".java")) {
+				i.importType = "JAVA";
+			} else if (candidate.getName().endsWith(".map")) {
+				String filename = candidate.getAbsolutePath();
+				File xslFile = new File(filename.replace(".map", ".xsl"));
+				if (xslFile.exists()) {
+					i.importType = "XSLT";
+					i.location = xslFile;
+				} else {
+					i.importType = "BOMAP";
+				}
+				
+			}
+			imports.add(i);
+		}
+		
+		return imports;
+	}
+
+	public void setProcessIndirectImports(boolean processIndirectImports) {
+		this.processIndirectImports = processIndirectImports;
+	}
+	
 }

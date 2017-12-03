@@ -21,6 +21,7 @@ public abstract class StatisticsPackage {
 	protected String delimiter;
 	private boolean doAnonymization;
 	private boolean doPseudoAnonymization;
+	protected boolean isProcessIndirectImports;
 	protected Writer writer;
 
 	public void setPrintHeader(boolean printHeader) {
@@ -47,6 +48,10 @@ public abstract class StatisticsPackage {
 		this.doPseudoAnonymization = doPseudoAnonymization;
 	}
 	
+	public void setImportAll(boolean isImportAll) {
+		this.isProcessIndirectImports = isImportAll;
+	}
+
 	protected String getSecondaryDelimiter() {
 		if(!delimiter.equals(",")) {
 			return ",";
