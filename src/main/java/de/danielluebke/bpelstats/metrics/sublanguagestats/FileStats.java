@@ -26,13 +26,25 @@ public class FileStats {
 	public int xpathExpressionOccurrences = 0;
 	public int xqueryComplexity = 0;
 	public int xsltComplexity = 0;
-	public int javaExpressionLOCs = 0;
-	public int javaExpressionSLOCs = 0;
-	public int javaExpressionOccurrences = 0;
-	public int wpsBuiltInOccurences = 0;
+	public int javaLOCs = 0;
+	public int javaSLOCs = 0;
+	public int javaComplexity = 0;
+	public int javaNumConditions = 0;
+	public int javaNumIterations = 0;	
+	public int javaOccurrences = 0;
+	public int wpsBuiltInOccurrences = 0;
+	public int xmlMapOccurrences = 0;
+	public int boMapLOCs = 0;
+	public int boMapComplexity = 0;
+	public int boMapNumConditions = 0;
+	public int boMapNumIterations = 0;
+	public int boMapOccurrences = 0;
 	public HalsteadMetrics xpathHalstead = new HalsteadMetrics();
 	public HalsteadMetrics xsltHalstead = new HalsteadMetrics();
 	public HalsteadMetrics xqueryHalstead = new HalsteadMetrics();
+	public HalsteadMetrics xmlmapHalstead = new HalsteadMetrics();
+	public HalsteadMetrics bomapHalstead = new HalsteadMetrics();
+	public HalsteadMetrics javaHalstead = new HalsteadMetrics();
 
 	@Override
 	public String toString() {
@@ -58,12 +70,24 @@ public class FileStats {
 		xpathExpressionOccurrences += f.xpathExpressionOccurrences;
 		xqueryComplexity += f.xqueryComplexity;
 		xsltComplexity += f.xsltComplexity;
-		javaExpressionLOCs += f.javaExpressionLOCs;
-		javaExpressionSLOCs += f.javaExpressionSLOCs;
-		javaExpressionOccurrences += f.javaExpressionOccurrences;
-		wpsBuiltInOccurences += f.wpsBuiltInOccurences;
+		javaLOCs += f.javaLOCs;
+		javaSLOCs += f.javaSLOCs;
+		javaComplexity += f.javaComplexity;
+		javaNumConditions += f.javaNumConditions;
+		javaNumIterations += f.javaNumIterations;		
+		javaOccurrences += f.javaOccurrences;
+		wpsBuiltInOccurrences += f.wpsBuiltInOccurrences;
+		xmlMapOccurrences += f.xmlMapOccurrences;
+		boMapLOCs += f.boMapLOCs;
+		boMapComplexity += f.boMapComplexity;
+		boMapNumConditions += f.boMapNumConditions;
+		boMapNumIterations += f.boMapNumIterations;
+		boMapOccurrences += f.boMapOccurrences;
 		xpathHalstead.add(f.xpathHalstead);
 		xsltHalstead.add(f.xsltHalstead);
 		xqueryHalstead.add(f.xqueryHalstead);
+		xmlmapHalstead.add(f.xmlmapHalstead);
+		bomapHalstead.add(f.bomapHalstead);
+		javaHalstead.add(f.javaHalstead);
 	}
 }

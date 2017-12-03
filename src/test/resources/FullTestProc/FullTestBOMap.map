@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:businessObjectMap xmlns:FullTestBOMap="http://FullTestProc" xmlns:Person="http://FullTestLib" xmlns:map="http://www.ibm.com/xmlns/prod/websphere/wbiserver/map/6.0.0" targetNamespace="http://FullTestProc">
+  <map:name>FullTestBOMap</map:name>
+  <map:inputBusinessObjectVariable businessObjectRef="Person:Person" name="Person"/>
+  <map:outputBusinessObjectVariable businessObjectRef="Person:Stuff" name="Stuff"/>
+  <map:propertyMap executionOrder="1">
+    <map:move>
+      <map:input businessObjectVariableRef="Person" property="vorname"/>
+      <map:output businessObjectVariableRef="Stuff" property="field1"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="2">
+    <map:set value="Feld_2">
+      <map:output businessObjectVariableRef="Stuff" property="field2"/>
+    </map:set>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="3">
+    <map:custom>
+      <map:input businessObjectVariableRef="Person" property="nachname"/>
+      <map:output businessObjectVariableRef="Stuff" property="field3"/>
+      <map:javaCode>// The specific type of variable Person_nachname is java.lang.String&#xD;
+// The specific type of variable Stuff_field3 is java.lang.String&#xD;
+&#xD;
+if (1==1)&#xD;
+Stuff_field3 = Person_nachname + &quot; Nachname&quot;;</map:javaCode>
+    </map:custom>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="4">
+    <map:customAssignment>
+      <map:output businessObjectVariableRef="Stuff" property="field4"/>
+      <map:output businessObjectVariableRef="Stuff" property="field5"/>
+      <map:javaCode>Stuff_field4 = &quot;foo&quot;;&#xD;
+Stuff_field5 = &quot;bar&quot;;&#xD;
+while (1==0) {&#xD;
+i++;&#xD;
+}</map:javaCode>
+    </map:customAssignment>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="5">
+    <map:submap submapName="FullTestBOMap:FullTestBOMap_SubMap">
+      <map:input businessObjectVariableRef="Person" property="kontaktdaten" variableName="Kontaktdaten"/>
+      <map:output businessObjectVariableRef="Stuff" property="stuff" variableName="Stuff"/>
+    </map:submap>
+  </map:propertyMap>
+</map:businessObjectMap>

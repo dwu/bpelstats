@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><bpws:process xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/" xmlns:ns="http://FullTestProc/ProcessBOMapArtifacts" xmlns:ns0="http://FullTestLib" xmlns:ns1="http://FullTestProc/FullTestInterface" xmlns:wpc="http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/" expressionLanguage="http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/" name="ProcessBOMap" suppressJoinFailure="yes" targetNamespace="http://FullTestProc" wpc:continueOnError="no" wpc:displayName="ProcessBOMap" wpc:executionMode="longRunning" wpc:id="1" wpc:validFrom="2017-08-31T08:11:35" wpc:version="IBM_7.0.500">
+  <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" location="FullTestInterface.wsdl" namespace="http://FullTestProc/FullTestInterface"/>
+  <bpws:import importType="http://www.w3.org/2001/XMLSchema" location="Person.xsd" namespace="http://FullTestLib"/>
+  <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" location="ProcessBOMapArtifacts.wsdl" namespace="http://FullTestProc/ProcessBOMapArtifacts"/>
+  <bpws:import importType="http://www.w3.org/2001/XMLSchema" location="Stuff.xsd" namespace="http://FullTestLib"/>
+  <bpws:partnerLinks>
+    <bpws:partnerLink myRole="Interface" name="FullTestInterface" partnerLinkType="ns:FullTestInterfacePLT" wpc:id="2"/>
+  </bpws:partnerLinks>
+  <bpws:variables>
+    <bpws:variable name="input1" type="ns0:Person" wpc:id="6"/>
+    <bpws:variable name="output1" type="ns0:Stuff" wpc:id="7"/>
+  </bpws:variables>
+  <bpws:sequence name="HiddenSequence" wpc:id="1073741827">
+    <bpws:receive createInstance="yes" name="Receive" operation="operation1" partnerLink="FullTestInterface" portType="ns1:FullTestInterface" wpc:displayName="Receive" wpc:id="4" wpc:transactionalBehavior="commitAfter">
+      <wpc:output>
+        <wpc:parameter name="input1" variable="input1"/>
+      </wpc:output>
+    </bpws:receive>
+    <bpws:invoke name="DataMap" operation="null" partnerLink="null" portType="wpc:null" wpc:continueOnError="inherit" wpc:displayName="DataMap" wpc:id="8">
+      <wpc:script>
+        <wpc:javaCode><![CDATA[commonj.sdo.DataObject __result__2;
+{// create Stuff
+	com.ibm.websphere.bo.BOFactory factory = 
+	   (com.ibm.websphere.bo.BOFactory) new com.ibm.websphere.sca.ServiceManager().locateService("com/ibm/websphere/bo/BOFactory");
+	 __result__2 = factory.create("http://FullTestLib","Stuff");
+}
+output1 = __result__2;
+java.lang.Object __result__4 = null;
+try {
+	{// FullTestBOMap
+		java.util.HashMap inputMap = new java.util.HashMap();
+		java.util.HashMap outputMap = new java.util.HashMap();
+		inputMap.put("Person", input1);
+		outputMap.put("Stuff", output1);
+		com.ibm.wbiserver.map.MapService _serv = 
+			(com.ibm.wbiserver.map.MapService)new com.ibm.websphere.sca.ServiceManager().locateService("com/ibm/wbiserver/map/MapService");
+		_serv.transform("http://FullTestProc", "FullTestBOMap", inputMap, outputMap, ((com.ibm.wbiserver.relationshipservice.common.ExecutionContext)__result__4));
+	}
+}
+catch(com.ibm.wbiserver.map.exceptions.WBIMapFailureException ex){
+	com.ibm.wbiserver.map.exceptions.WBIMapFailureException __result__7;
+	ex.printStackTrace();
+}
+catch(com.ibm.wbiserver.map.exceptions.WBIMapNotFoundException ex){
+	com.ibm.wbiserver.map.exceptions.WBIMapNotFoundException __result__10;
+	ex.printStackTrace();
+}
+catch(com.ibm.wbiserver.map.exceptions.WBIMapServiceException ex){
+	com.ibm.wbiserver.map.exceptions.WBIMapServiceException __result__13;
+	ex.printStackTrace();
+}
+
+//@generated:com.ibm.wbit.activity.ui
+//<?xml version="1.0" encoding="UTF-8"?>
+//<com.ibm.wbit.activity:CompositeActivity xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.ibm.wbit.activity="http:///com/ibm/wbit/activity.ecore" name="ActivityMethod">
+//  <result name="Result">
+//    <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="void"/>
+//  </result>
+//  <exceptions>
+//    <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.bpe.api.ProcessException"/>
+//  </exceptions>
+//  <executableElements xsi:type="com.ibm.wbit.activity:Expression" value="input1" variable="true">
+//    <dataOutputs target="//@executableElements.4/@parameters.0"/>
+//    <type xsi:type="com.ibm.wbit.activity:XSDElementType" name="Person" namespace="http://FullTestLib"/>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:LibraryActivity" name="create Stuff" description="create a new Stuff {http://FullTestLib}" template="com.ibm.websphere.bo.BOFactory factory = &#xA;   (com.ibm.websphere.bo.BOFactory) new com.ibm.websphere.sca.ServiceManager().locateService(&quot;com/ibm/websphere/bo/BOFactory&quot;);&#xA; &lt;%return%> factory.create(&quot;http://FullTestLib&quot;,&quot;Stuff&quot;);">
+//    <result>
+//      <dataOutputs target="//@executableElements.2"/>
+//      <type xsi:type="com.ibm.wbit.activity:XSDElementType" name="Stuff" namespace="http://FullTestLib"/>
+//    </result>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:Expression" dataInputs="//@executableElements.1/@result/@dataOutputs.0" value="output1" variable="true">
+//    <dataOutputs target="//@executableElements.4/@parameters.1"/>
+//    <type xsi:type="com.ibm.wbit.activity:XSDElementType" name="Stuff" namespace="http://FullTestLib"/>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:Expression" value="null" assignable="false">
+//    <dataOutputs target="//@executableElements.4/@parameters.2"/>
+//    <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="java.lang.Object"/>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:LibraryActivity" name="FullTestBOMap" description="perform mapping {0}FullTestBOMap {http://FullTestProc}" template="java.util.HashMap inputMap = new java.util.HashMap();&#xA;java.util.HashMap outputMap = new java.util.HashMap();&#xA;inputMap.put(&quot;Person&quot;, &lt;%Person%>);&#xA;outputMap.put(&quot;Stuff&quot;, &lt;%Stuff%>);&#xA;com.ibm.wbiserver.map.MapService _serv = &#xA;&#x9;(com.ibm.wbiserver.map.MapService)new com.ibm.websphere.sca.ServiceManager().locateService(&quot;com/ibm/wbiserver/map/MapService&quot;);&#xA;_serv.transform(&quot;http://FullTestProc&quot;, &quot;FullTestBOMap&quot;, inputMap, outputMap, &lt;%executionContext%>);">
+//    <parameters name="Person" dataInputs="//@executableElements.0/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:XSDElementType" name="Person" namespace="http://FullTestLib"/>
+//    </parameters>
+//    <parameters name="Stuff" dataInputs="//@executableElements.2/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:XSDElementType" name="Stuff" namespace="http://FullTestLib"/>
+//    </parameters>
+//    <parameters name="executionContext" dataInputs="//@executableElements.3/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.relationshipservice.common.ExecutionContext"/>
+//    </parameters>
+//    <exceptions>
+//      <dataOutputs target="//@executableElements.5/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapFailureException"/>
+//    </exceptions>
+//    <exceptions>
+//      <dataOutputs target="//@executableElements.6/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapNotFoundException"/>
+//    </exceptions>
+//    <exceptions>
+//      <dataOutputs target="//@executableElements.7/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapServiceException"/>
+//    </exceptions>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:ExceptionHandler" name="Exception Handler" collapsed="true">
+//    <parameters name="ex" dataInputs="//@executableElements.4/@exceptions.0/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapFailureException"/>
+//    </parameters>
+//    <executableElements xsi:type="com.ibm.wbit.activity:Expression" value="ex" input="true">
+//      <dataOutputs target="//@executableElements.5/@executableElements.1/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapFailureException"/>
+//    </executableElements>
+//    <executableElements xsi:type="com.ibm.wbit.activity:JavaActivity" name="printStackTrace" category="java.lang.Throwable" className="java.lang.Throwable" memberName="printStackTrace">
+//      <parameters name="Throwable" dataInputs="//@executableElements.5/@executableElements.0/@dataOutputs.0">
+//        <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="java.lang.Throwable"/>
+//      </parameters>
+//    </executableElements>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:ExceptionHandler" name="Exception Handler" collapsed="true">
+//    <parameters name="ex" dataInputs="//@executableElements.4/@exceptions.1/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapNotFoundException"/>
+//    </parameters>
+//    <executableElements xsi:type="com.ibm.wbit.activity:Expression" value="ex" input="true">
+//      <dataOutputs target="//@executableElements.6/@executableElements.1/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapNotFoundException"/>
+//    </executableElements>
+//    <executableElements xsi:type="com.ibm.wbit.activity:JavaActivity" name="printStackTrace" category="java.lang.Throwable" className="java.lang.Throwable" memberName="printStackTrace">
+//      <parameters name="Throwable" dataInputs="//@executableElements.6/@executableElements.0/@dataOutputs.0">
+//        <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="java.lang.Throwable"/>
+//      </parameters>
+//    </executableElements>
+//  </executableElements>
+//  <executableElements xsi:type="com.ibm.wbit.activity:ExceptionHandler" name="Exception Handler" collapsed="true">
+//    <parameters name="ex" dataInputs="//@executableElements.4/@exceptions.2/@dataOutputs.0">
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapServiceException"/>
+//    </parameters>
+//    <executableElements xsi:type="com.ibm.wbit.activity:Expression" value="ex" input="true">
+//      <dataOutputs target="//@executableElements.7/@executableElements.1/@parameters.0"/>
+//      <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="com.ibm.wbiserver.map.exceptions.WBIMapServiceException"/>
+//    </executableElements>
+//    <executableElements xsi:type="com.ibm.wbit.activity:JavaActivity" name="printStackTrace" category="java.lang.Throwable" className="java.lang.Throwable" memberName="printStackTrace">
+//      <parameters name="Throwable" dataInputs="//@executableElements.7/@executableElements.0/@dataOutputs.0">
+//        <type xsi:type="com.ibm.wbit.activity:JavaElementType" name="java.lang.Throwable"/>
+//      </parameters>
+//    </executableElements>
+//  </executableElements>
+//</com.ibm.wbit.activity:CompositeActivity>
+//@generated:end
+//!SMAP!*S WBIACTDBG
+//!SMAP!*L
+//!SMAP!2:1,6
+//!SMAP!3:7,1
+//!SMAP!4:8,1
+//!SMAP!5:10,9
+//!SMAP!7:21,1
+//!SMAP!8:22,1
+//!SMAP!10:25,1
+//!SMAP!11:26,1
+//!SMAP!13:29,1
+//!SMAP!14:30,1
+//!SMAP!1000000:140,1]]></wpc:javaCode>
+      </wpc:script>
+    </bpws:invoke>
+    <bpws:reply name="Reply" operation="operation1" partnerLink="FullTestInterface" portType="ns1:FullTestInterface" wpc:displayName="Reply" wpc:id="5">
+      <wpc:input>
+        <wpc:parameter name="output1" variable="output1"/>
+      </wpc:input>
+    </bpws:reply>
+  </bpws:sequence>
+</bpws:process>

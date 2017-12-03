@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
@@ -75,17 +77,32 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private int xpathExpressionOccurrences = 0;
 	private int xqueryComplexityQuery = 0;
 	private int xqueryComplexityExpression = 0;
-	private int javaExpressionOccurrences = 0;
-	private int javaExpressionLOCs = 0;
-	private int javaExpressionSLOCs = 0;
-	private int wpsBuiltInOccurences = 0;
+	private int javaOccurrences = 0;
+	private int javaLOCs = 0;
+	private int javaSLOCs = 0;
+	private int javaComplexity = 0;
+	private int javaNumConditions = 0;
+	private int javaNumIterations = 0;
+	private int boMapOccurrences = 0;
+	private int xmlMapOccurrences = 0;	
+	private int wpsBuiltInOccurrences = 0;
 	private String bpelNamespace;
+
+	private static final String XML_MAP_TRANSFORM_PATTERN = "com\\.ibm\\.wbiserver\\.transform\\.util\\.TransformTypeHelper\\.transformTypes\\(.*\"(.*)\"";
+	private Pattern xmlMapTransform;
+	
+	private static final String BO_MAP_TRANSFORM_PATTERN = "_serv.transform\\(\".*\", \"(.*)\", inputMap, outputMap, .*\\)\\);";
+	private Pattern boMapTransform;	
 	
 	private XPathHalsteadMetricsCalculator xpathHalsteadCalculator = null;
 	private HalsteadMetrics xqueryHalsteadMetrics;
+	private HalsteadMetrics javaHalsteadMetrics;
 	
 	public BPELSubLanguageParser(File baseDirectory) {
 		this.baseDirectory = baseDirectory;
+		
+		xmlMapTransform = Pattern.compile(XML_MAP_TRANSFORM_PATTERN);
+		boMapTransform = Pattern.compile(BO_MAP_TRANSFORM_PATTERN);
 	}
 	
 	@Override
@@ -102,9 +119,19 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		xpathExpressionLOCs = 0;
 		xqueryComplexityQuery = 0;
 		xqueryComplexityExpression = 0;
+		javaOccurrences = 0;
+		javaLOCs = 0;
+		javaSLOCs = 0;
+		javaComplexity = 0;
+		javaNumConditions = 0;
+		javaNumIterations = 0;
+		wpsBuiltInOccurrences = 0;
+		boMapOccurrences = 0;
+		xmlMapOccurrences = 0;
 		
 		xpathHalsteadCalculator = new XPathHalsteadMetricsCalculator();
 		xqueryHalsteadMetrics = new HalsteadMetrics();
+		javaHalsteadMetrics = new HalsteadMetrics();
 	}
 	
 	@Override
@@ -290,11 +317,39 @@ public class BPELSubLanguageParser extends DefaultHandler {
 					xquerySimpleExpressionLOCs += loc;
 				}
 			} else if(URN_JAVA.contains(lf.language)) {
-				javaExpressionOccurrences ++;
-				javaExpressionLOCs += calculateLOC(lf);
-				javaExpressionSLOCs += calculateSLOC(lf);
+				Matcher xmlMap = xmlMapTransform.matcher(lf.fragment);
+				Matcher boMap = boMapTransform.matcher(lf.fragment);
+				if (xmlMap.find()) {
+					xmlMapOccurrences++;
+
+					// Process XSLT representation of XML maps
+					Import i = new Import();
+					i.importType = "XSLT";
+					i.location = new File(baseDirectory, xmlMap.group(1));
+					imports.add(i);				
+				} else if (boMap.find()) {
+					// Process BOMaps
+					boMapOccurrences++;
+
+					Import i = new Import();
+					i.importType = "BOMAP";
+					i.location = new File(baseDirectory, boMap.group(1) + ".map");
+					imports.add(i);
+				} else {
+					// Process as pure java code
+					javaOccurrences++;
+					javaLOCs += calculateLOC(lf);
+					javaSLOCs += calculateSLOC(lf);
+
+					JavaWPSSubLanguageParser javaParser = new JavaWPSSubLanguageParser(baseDirectory);
+					javaParser.calculateComplexity(lf.fragment);
+					javaComplexity += javaParser.getComplexity();
+					javaNumConditions += javaParser.getNumConditions();
+					javaNumIterations += javaParser.getNumIterations();
+					javaHalsteadMetrics.add(javaParser.getHalsteadMetrics());
+				}
 			} else if(URN_WPSBUILTIN.contains(lf.language)) {
-				this.wpsBuiltInOccurences++;
+				this.wpsBuiltInOccurrences++;
 			} else {
 				System.err.println(lf.language + " not found!");
 			}
@@ -308,6 +363,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		xquerySimpleQueryLOCs = 0;
 		xpathExpressionLOCs = 0;
 		xpathQueryLOCs = 0;
+		javaLOCs = 0;
+		javaSLOCs = 0;
 	}
 
 	private void removeEmptyFragments() {
@@ -338,7 +395,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	}
 	
 	private int calculateSLOC(LanguageFragment f) {
-		return LOCCalculator.calculateSLOC(f.fragment);
+		return LOCCalculator.calculateJavaSLOC(f.fragment);
 	}
 
 	public List<Import> getImports() {
@@ -400,20 +457,40 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		return xqueryComplexityQuery;
 	}
 
-	public int getJavaExpressionOccurrences() {
-		return javaExpressionOccurrences;
+	public int getJavaOccurrences() {
+		return javaOccurrences;
 	}
 
-	public int getJavaExpressionLOCs() {
-		return javaExpressionLOCs;
+	public int getJavaLOCs() {
+		return javaLOCs;
 	}
 	
-	public int getJavaExpressionSLOCs() {
-		return javaExpressionSLOCs;
+	public int getJavaSLOCs() {
+		return javaSLOCs;
 	}
 	
-	public int getWpsBuiltInOccurences() {
-		return wpsBuiltInOccurences;
+	public int getWpsBuiltInOccurrences() {
+		return wpsBuiltInOccurrences;
+	}
+	
+	public int getBoMapOccurrences() {
+		return boMapOccurrences;
+	}
+
+	public int getXmlMapOccurrences() {
+		return xmlMapOccurrences;
+	}
+
+	public int getJavaNumConditions() {
+		return javaNumConditions;
+	}
+
+	public int getJavaNumIterations() {
+		return javaNumIterations;
+	}
+
+	public int getJavaComplexity() {
+		return javaComplexity;
 	}
 	
 	public HalsteadMetrics getXPathHalsteadMetrics() {
@@ -423,4 +500,9 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	public HalsteadMetrics getXQueryHalsteadMetrics() {
 		return xqueryHalsteadMetrics;
 	}
+
+	public HalsteadMetrics getJavaHalsteadMetrics() {
+		return javaHalsteadMetrics;
+	}
+	
 }

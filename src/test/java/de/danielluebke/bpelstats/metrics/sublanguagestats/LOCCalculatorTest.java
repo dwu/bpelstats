@@ -43,7 +43,7 @@ public class LOCCalculatorTest {
 	public void testSLOCMultilineCommentsAreCalculatedCorrectlyIfTheyBeginAtStartOfLine() {
 		String java = "int i = 0; \n/* \n asd \n */";
 		
-		int sloc = LOCCalculator.calculateSLOC(java);
+		int sloc = LOCCalculator.calculateJavaSLOC(java);
 		assertEquals(1, sloc);
 	}
 	
@@ -51,14 +51,14 @@ public class LOCCalculatorTest {
 	public void testSLOCOnlySingleLineComment() {
 		String java = "// comment";
 		
-		int sloc = LOCCalculator.calculateSLOC(java);
+		int sloc = LOCCalculator.calculateJavaSLOC(java);
 		assertEquals(0, sloc);
 	}
 	@Test
 	public void testSLOCOnlyMultiLineComment() {
 		String java = "/* Test */";
 		
-		int sloc = LOCCalculator.calculateSLOC(java);
+		int sloc = LOCCalculator.calculateJavaSLOC(java);
 		assertEquals(0, sloc);
 	}
 	
@@ -66,7 +66,7 @@ public class LOCCalculatorTest {
 	public void testSLOCMultilineCommentsAreCalculatedCorrectlyIfTheyDoNotEndAtEndOfLine() {
 		String java = "int i = 0; \n/* \n asd \n */ i++;";
 		
-		int sloc = LOCCalculator.calculateSLOC(java);
+		int sloc = LOCCalculator.calculateJavaSLOC(java);
 		assertEquals(2, sloc);
 	}
 	
@@ -74,8 +74,8 @@ public class LOCCalculatorTest {
 	public void testSLOCMultilineCommentsAreCalculatedCorrectlyIfTheyAreNotBeginningAtStartOfLine() {
 		String java = "int i = 0; /* \n asd \n */";
 		
-		int sloc = LOCCalculator.calculateSLOC(java);
+		int sloc = LOCCalculator.calculateJavaSLOC(java);
 		assertEquals(1, sloc);
 	}
-	
+
 }

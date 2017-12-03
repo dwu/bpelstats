@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scdl:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mfc="http://www.ibm.com/xmlns/prod/websphere/scdl/mfc/6.0.0" xmlns:ns1="http://FullTestProc/FullTestInterface" xmlns:ns2="http://FullTestProc/FullTestInterfaceAcceptsStuff" xmlns:scdl="http://www.ibm.com/xmlns/prod/websphere/scdl/6.0.0" xmlns:wsdl="http://www.ibm.com/xmlns/prod/websphere/scdl/wsdl/6.0.0" displayName="MedationFlow" name="MedationFlow">
+  <interfaces>
+    <interface xsi:type="wsdl:WSDLPortType" portType="ns1:FullTestInterface"/>
+  </interfaces>
+  <references>
+    <reference name="FullTestInterfaceAcceptsStuffPartner">
+      <interface xsi:type="wsdl:WSDLPortType" portType="ns2:FullTestInterfaceAcceptsStuff"/>
+      <scdl:referenceQualifier xsi:type="scdl:SuspendTransaction" value="false"/>
+      <scdl:referenceQualifier xsi:type="scdl:Reliability"/>
+      <scdl:referenceQualifier xsi:type="scdl:DeliverAsyncAt" value="commit"/>
+      <wire target="Component1"/>
+    </reference>
+  </references>
+  <implementation xsi:type="mfc:MediationFlowImplementation" mfcFile="MedationFlow.mfc"/>
+</scdl:component>

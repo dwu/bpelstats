@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:BOMapper.mednode="mednode://mednodes/BOMapper.mednode/BOMapper" xmlns:CustomMediation.mednode="mednode://mednodes/CustomMediation.mednode/CustomMediation" xmlns:Input.mednode="mednode://mednodes/Input.mednode/Input" xmlns:InputResponse.mednode="mednode://mednodes/InputResponse.mednode/InputResponse" xmlns:MedationFlow.medflow="MedationFlow.medflow" xmlns:XSLTransformation.mednode="mednode://mednodes/XSLTransformation.mednode/XSLTransformation" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow2="http://www.ibm.com/2006/eflow" xmlns:type="http://www.ibm.com/2006/eflow/type" xmlns:utility="http://www.ibm.com/2006/eflow/utility" name="root" nsURI="MedationFlow.medflow" nsPrefix="MedationFlow.medflow">
+  <eClassifiers xmi:type="eflow2:FCMComposite" name="root_I_2">
+    <eSuperTypes href="http://www.ibm.com/2006/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.name" name="name" lowerBound="1" defaultValueLiteral="">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <composition>
+      <type xmi:type="type:CompositeType" xmi:id="CompositeType_1">
+        <elements id="message">
+          <type xmi:type="type:WSDLMessageType" wsdlMessage="{http://FullTestProc/FullTestInterface}operation1RequestMsg"/>
+        </elements>
+      </type>
+      <type xmi:type="type:CompositeType" xmi:id="CompositeType_2">
+        <elements id="message">
+          <type xmi:type="type:WSDLMessageType" wsdlMessage="{http://FullTestProc/FullTestInterface}operation1ResponseMsg"/>
+        </elements>
+      </type>
+      <nodes xmi:type="Input.mednode:Input" xmi:id="Input_1" name="FullTestInterface_operation1_Input">
+        <location x="10" y="124"/>
+        <outTerminals terminalNodeID="OutTerminal.out" explicitType="true" type="CompositeType_1"/>
+        <translation xmi:type="utility:ConstantString" string="operation1 : FullTestInterface"/>
+      </nodes>
+      <nodes xmi:type="InputResponse.mednode:InputResponse" xmi:id="InputResponse_1" name="FullTestInterface_operation1_InputResponse">
+        <location x="400" y="124"/>
+        <inTerminals terminalNodeID="InTerminal.in" explicitType="true" type="CompositeType_2"/>
+        <translation xmi:type="utility:ConstantString" string="operation1 : FullTestInterface"/>
+      </nodes>
+      <nodes xmi:type="XSLTransformation.mednode:XSLTransformation" xmi:id="XSLTransformation_1" name="XSLTransformation1" root="/body" XSLTransform="xslt/XSLTransformation1_req_1.xsl" XMXMap="xslt/XSLTransformation1_req_1.map" SMOVersion="SMO61">
+        <location x="227" y="228"/>
+        <outTerminals terminalNodeID="OutTerminal.out" explicitType="true" type="CompositeType_2"/>
+        <outTerminals terminalNodeID="OutTerminal.Failure" type="CompositeType_1"/>
+        <inTerminals terminalNodeID="InTerminal.in" explicitType="true" type="CompositeType_1"/>
+        <translation xmi:type="utility:ConstantString" string="XSLTransformation1"/>
+      </nodes>
+      <nodes xmi:type="BOMapper.mednode:BOMapper" xmi:id="BOMapper_1" name="BOMapper1" root="/body" mappingFile="MediationBOMap.map">
+        <location x="227" y="124"/>
+        <outTerminals terminalNodeID="OutTerminal.out" explicitType="true" type="CompositeType_2"/>
+        <outTerminals terminalNodeID="OutTerminal.Failure" type="CompositeType_1"/>
+        <inTerminals terminalNodeID="InTerminal.in" explicitType="true" type="CompositeType_1"/>
+        <translation xmi:type="utility:ConstantString" string="BOMapper1"/>
+      </nodes>
+      <nodes xmi:type="CustomMediation.mednode:CustomMediation" xmi:id="CustomMediation_1" name="CustomMediation1" javaCode="&#xA;out.fire(smo); // propagate the service message object to the primitive that is wired to the 'out' terminal" javaClass="sca.component.mediation.java.Custom1504169267679" version="6.1.0">
+        <location x="227" y="20"/>
+        <outTerminals terminalNodeID="OutTerminal.Failure" type="CompositeType_1"/>
+        <outTerminals terminalNodeID="OutTerminal.dynamic:out:out" dynamic="true" label="out" type="CompositeType_2"/>
+        <inTerminals terminalNodeID="InTerminal.in" type="CompositeType_1"/>
+        <translation xmi:type="utility:ConstantString" string="CustomMediation1"/>
+      </nodes>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_1" targetNode="XSLTransformation_1" sourceNode="Input_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_2" targetNode="BOMapper_1" sourceNode="Input_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_3" targetNode="CustomMediation_1" sourceNode="Input_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_4" targetNode="InputResponse_1" sourceNode="XSLTransformation_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_5" targetNode="InputResponse_1" sourceNode="BOMapper_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow2:FCMConnection" xmi:id="FCMConnection_6" targetNode="InputResponse_1" sourceNode="CustomMediation_1" sourceTerminalName="OutTerminal.dynamic:out:out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="basic" describedAttribute="Property.name"/>
+    </propertyOrganizer>
+  </eClassifiers>
+  <eClassifiers xmi:type="eflow2:FCMComposite" name="root">
+    <eSuperTypes href="http://www.ibm.com/2006/eflow#//FCMBlock"/>
+    <composition>
+      <nodes xmi:type="MedationFlow.medflow:root_I_2" xmi:id="root_I_2_1" name="{http://FullTestProc/FullTestInterface}FullTestInterface:operation1::request"/>
+    </composition>
+    <propertyOrganizer/>
+  </eClassifiers>
+</ecore:EPackage>

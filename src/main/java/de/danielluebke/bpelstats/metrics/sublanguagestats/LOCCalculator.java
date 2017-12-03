@@ -1,5 +1,9 @@
 package de.danielluebke.bpelstats.metrics.sublanguagestats;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Token;
+
+import de.danielluebke.bpelstats.metrics.sublanguagestats.java.parser.JavaLexer;
 
 public class LOCCalculator {
 
@@ -16,41 +20,22 @@ public class LOCCalculator {
 		return locCount;
 	}
 	
-	public static int calculateSLOC(String source) {
+	public static int calculateJavaSLOC(String source) {
 		if(source == null) return 0;
 		
-		String[] lines = source.replaceAll("\r", "\n").split("\n");
-		
-		boolean inComment = false;
-		int slocCount = 0;
-		for(String line : lines) {
-			String l = line.trim();
-			
-			if("".equals(l))
-				continue;
-			
-			if(l.contains("/*")) {
-				inComment = true;
-				if (l.contains("*/")) {
-					inComment = false;
-				}
-				if (!(l.startsWith("/*") && (!l.contains("*/") || l.endsWith("*/")))) {
-					slocCount++;
-				}
-				continue;
-			}
-			if(l.contains("*/")) {
-				if (!l.endsWith("/*") && !inComment) {
-					slocCount++;
-				}
-				inComment = false;
-				continue;
-			}
-			if(inComment || l.startsWith("//"))
-				continue;
+		JavaLexer lexer = new JavaLexer(CharStreams.fromString(source));
 
-			// else
-			slocCount++;
+		int lastTokenLine = 0;
+		int slocCount = 0;
+		
+		for (Token t : lexer.getAllTokens()) {
+			// not COMMENT or LINE_COMMENT
+			if (t.getType() != 107 && t.getType() != 108) {
+				if (t.getLine() > lastTokenLine) {
+					slocCount++;
+					lastTokenLine = t.getLine();
+				}
+			}
 		}
 		
 		return slocCount;

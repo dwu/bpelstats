@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions name="ProcessMediation" targetNamespace="http://FullTestProc/ProcessMediationArtifacts" xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:tns="http://FullTestProc/ProcessMediationArtifacts" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl0="http://FullTestProc/FullTestInterface" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <plnk:partnerLinkType name="FullTestInterfacePLT">
+    <plnk:role name="Interface">
+      <plnk:portType name="wsdl0:FullTestInterface"/>
+    </plnk:role>
+  </plnk:partnerLinkType>
+  <plnk:partnerLinkType name="FullTestInterfacePLT1">
+    <plnk:role name="Interface">
+      <plnk:portType name="wsdl0:FullTestInterface"/>
+    </plnk:role>
+  </plnk:partnerLinkType>
+    <wsdl:import location="FullTestInterface.wsdl" namespace="http://FullTestProc/FullTestInterface"/>
+</wsdl:definitions>

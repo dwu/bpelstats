@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot domainID="com.ibm.msl.mapping.xml" targetNamespace="http://FullTestProc/FullTestXMLMap" version="7.0.500" xmlns="http://www.ibm.com/2008/ccl/Mapping" xmlns:map="http://FullTestProc/FullTestXMLMap">
+    <input path="../FullTestLib/Person.xsd"/>
+    <output path="../FullTestLib/Stuff.xsd"/>
+    <imports>
+        <import kind="java" location="test.CustomJavaMapping" namespace="xalan://test.CustomJavaMapping"/>
+        <import kind="xslt" location="FullTestXMLMap_XSLT.xsl"/>
+    </imports>
+    <namespaces>
+        <namespace kind="extension" prefix="CustomJavaMapping" uri="xalan://test.CustomJavaMapping"/>
+    </namespaces>
+    <mappingDeclaration name="FullTestXMLMap">
+        <input path="type('Person')"/>
+        <output path="type('Stuff')"/>
+        <move>
+            <input path="vorname"/>
+            <output path="field1"/>
+        </move>
+        <customFunction lang="java" ref="CustomJavaMapping:mapStuff">
+            <input path="nachname" var="nachname"/>
+            <input path="geburtsdatum" var="geburtsdatum"/>
+            <output path="field2"/>
+            <param name="a" value="$nachname"/>
+            <param name="b" value="$geburtsdatum"/>
+        </customFunction>
+        <customFunction lang="xslt" location="FullTestXMLMap_XSLT.xsl" ref="GeburtsdatumToField3">
+            <input path="geburtsdatum" var="geburtsdatum1"/>
+            <output path="field3"/>
+            <param name="geburtsdatum1" value="$geburtsdatum1"/>
+        </customFunction>
+        <foreach>
+            <input path="kontaktdaten"/>
+            <output path="stuff"/>
+            <move>
+                <input path="field2"/>
+                <output path="field2"/>
+            </move>
+            <move>
+                <input path="field3"/>
+                <output path="field3"/>
+            </move>
+            <move>
+                <input path="field4"/>
+                <output path="field4"/>
+            </move>
+            <if>
+                <input path="field1" var="field1"/>
+                <output path="field1"/>
+                <test lang="XPath">string-length($field1) &lt; 100</test>
+                <move>
+                    <input path="$field1/." var="field11"/>
+                    <output path="."/>
+                </move>
+            </if>
+        </foreach>
+        <expression>
+            <input path="kontaktdaten" var="kontaktdaten"/>
+            <output path="field4"/>
+            <code lang="xpath">count($kontaktdaten)</code>
+        </expression>
+    </mappingDeclaration>
+</mappingRoot>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:businessObjectMap xmlns:MediationBOMap="http://FullTestProc" xmlns:map="http://www.ibm.com/xmlns/prod/websphere/wbiserver/map/6.0.0" xmlns:operation1RequestMsg="smo://smo/name%3Dwsdl-body/message%3D%257Bhttp%253A%252F%252FFullTestProc%252FFullTestInterface%257Doperation1RequestMsg/xpath%3D%252Fbody/namespace%3DBOMap/smo.xsd" xmlns:operation1ResponseMsg="smo://smo/name%3Dwsdl-body/message%3D%257Bhttp%253A%252F%252FFullTestProc%252FFullTestInterface%257Doperation1ResponseMsg/xpath%3D%252Fbody/namespace%3DBOMap/smo.xsd" targetNamespace="http://FullTestProc">
+  <map:name>MediationBOMap</map:name>
+  <map:inputBusinessObjectVariable businessObjectRef="operation1RequestMsg:operation1RequestMsg" name="operation1RequestMsg"/>
+  <map:outputBusinessObjectVariable businessObjectRef="operation1ResponseMsg:operation1ResponseMsg" name="operation1ResponseMsg"/>
+  <map:propertyMap executionOrder="1">
+    <map:move>
+      <map:input businessObjectVariableRef="operation1RequestMsg" property="operation1/input1/vorname"/>
+      <map:output businessObjectVariableRef="operation1ResponseMsg" property="operation1Response/output1/field1"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="2">
+    <map:move>
+      <map:input businessObjectVariableRef="operation1RequestMsg" property="operation1/input1/nachname"/>
+      <map:output businessObjectVariableRef="operation1ResponseMsg" property="operation1Response/output1/field2"/>
+    </map:move>
+  </map:propertyMap>
+</map:businessObjectMap>

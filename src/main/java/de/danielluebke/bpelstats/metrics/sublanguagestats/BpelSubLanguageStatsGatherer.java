@@ -46,10 +46,16 @@ public class BpelSubLanguageStatsGatherer {
 		bpelFileStats.xpathQueryOccurrences = handler.getXPathQueryOccurrences();
 		bpelFileStats.xpathExpressionOccurrences = handler.getXPathExpressionOccurrences();
 		bpelFileStats.xqueryComplexity = handler.getXQueryComplexityExpression() + handler.getXQueryComplexityQuery();
-		bpelFileStats.javaExpressionLOCs = handler.getJavaExpressionLOCs();
-		bpelFileStats.javaExpressionSLOCs = handler.getJavaExpressionSLOCs();
-		bpelFileStats.javaExpressionOccurrences = handler.getJavaExpressionOccurrences();
-		bpelFileStats.wpsBuiltInOccurences = handler.getWpsBuiltInOccurences();
+		bpelFileStats.javaLOCs = handler.getJavaLOCs();
+		bpelFileStats.javaSLOCs = handler.getJavaSLOCs();
+		bpelFileStats.javaComplexity = handler.getJavaComplexity();
+		bpelFileStats.javaNumConditions = handler.getJavaNumConditions();
+		bpelFileStats.javaNumIterations = handler.getJavaNumIterations();
+		bpelFileStats.javaHalstead = handler.getJavaHalsteadMetrics();
+		bpelFileStats.javaOccurrences = handler.getJavaOccurrences();
+		bpelFileStats.wpsBuiltInOccurrences = handler.getWpsBuiltInOccurrences();
+		bpelFileStats.boMapOccurrences = handler.getBoMapOccurrences();
+		bpelFileStats.xmlMapOccurrences = handler.getXmlMapOccurrences();
 		fileStats.add(bpelFileStats);
 		
 		XQuerySubLanguageParser xqueryParser = new XQuerySubLanguageParser();
@@ -88,6 +94,18 @@ public class BpelSubLanguageStatsGatherer {
 					xqueryFileStats.xqueryComplexity = xqueryParser.getComplexity();
 					xqueryFileStats.xqueryHalstead = xqueryParser.getHalsteadMetrics();
 					fileStats.add(xqueryFileStats);
+				} else if(imp.importType.equals("BOMAP")) {
+					BOMapSubLanguageParser boMapSubLanguageStats = getBOMapSubLanguageStats(imp.location);
+					remainingImports.addAll(boMapSubLanguageStats.getImports());
+					FileStats boMapFileStats = new FileStats();
+					boMapFileStats.fileType = "BOMAP";
+					boMapFileStats.absoluteFileName = imp.location.getAbsoluteFile();
+					boMapFileStats.boMapLOCs = calculateLOCs(boMapFileStats.absoluteFileName);
+					boMapFileStats.boMapComplexity = boMapSubLanguageStats.getComplexity();
+					boMapFileStats.boMapNumConditions = boMapSubLanguageStats.getNumConditions();
+					boMapFileStats.boMapNumIterations = boMapSubLanguageStats.getNumIterations();
+					boMapFileStats.bomapHalstead = boMapSubLanguageStats.getHalsteadMetrics();
+					fileStats.add(boMapFileStats);
 				}
 				processedImports.add(imp);
 			}
@@ -188,5 +206,24 @@ public class BpelSubLanguageStatsGatherer {
 		xmlReader.parse(new InputSource(new FileInputStream(f)));
 		
 		return handler;
+	}
+	
+	private BOMapSubLanguageParser getBOMapSubLanguageStats(File location) throws SAXException, ParserConfigurationException, IOException {
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		spf.setNamespaceAware(true);
+		SAXParser saxParser = spf.newSAXParser();
+		XMLReader xmlReader = saxParser.getXMLReader();
+		BOMapSubLanguageParser handler = new BOMapSubLanguageParser(location.getParentFile());
+		xmlReader.setContentHandler(handler);
+		xmlReader.parse(new InputSource(new FileInputStream(location)));
+		
+		return handler;
+	}
+	
+	public JavaWPSSubLanguageParser getJavaWPSSubLanguageStats(File location) throws IOException {
+		JavaWPSSubLanguageParser javaParser = new JavaWPSSubLanguageParser(location.getParentFile());
+		javaParser.calculateComplexity(FileUtils.readFileToString(location));
+		
+		return javaParser;
 	}
 }

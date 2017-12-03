@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:businessObjectMap xmlns:FullTestBOMap_SubMap="http://FullTestProc" xmlns:Kontaktdaten="http://FullTestLib" xmlns:map="http://www.ibm.com/xmlns/prod/websphere/wbiserver/map/6.0.0" targetNamespace="http://FullTestProc">
+  <map:name>FullTestBOMap_SubMap</map:name>
+  <map:inputBusinessObjectVariable businessObjectRef="Kontaktdaten:Kontaktdaten" name="Kontaktdaten"/>
+  <map:outputBusinessObjectVariable businessObjectRef="Kontaktdaten:Stuff" name="Stuff"/>
+  <map:propertyMap executionOrder="1">
+    <map:move>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field1"/>
+      <map:output businessObjectVariableRef="Stuff" property="field1"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="2">
+    <map:move>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field2"/>
+      <map:output businessObjectVariableRef="Stuff" property="field2"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="3">
+    <map:move>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field3"/>
+      <map:output businessObjectVariableRef="Stuff" property="field3"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="4">
+    <map:move>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field4"/>
+      <map:output businessObjectVariableRef="Stuff" property="field4"/>
+    </map:move>
+  </map:propertyMap>
+  <map:propertyMap executionOrder="5">
+    <map:join>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field3"/>
+      <map:input businessObjectVariableRef="Kontaktdaten" property="field4"/>
+      <map:output businessObjectVariableRef="Stuff" property="field5"/>
+    </map:join>
+  </map:propertyMap>
+</map:businessObjectMap>

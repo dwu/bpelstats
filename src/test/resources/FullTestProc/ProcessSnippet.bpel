@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><bpws:process xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/" xmlns:ns="http://FullTestProc/Component1Artifacts" xmlns:ns0="http://FullTestLib" xmlns:ns1="http://FullTestProc/FullTestInterface" xmlns:wpc="http://www.ibm.com/xmlns/prod/websphere/business-process/6.0.0/" expressionLanguage="http://www.ibm.com/xmlns/prod/websphere/business-process/expression-lang/java/6.0.0/" name="ProcessSnippet" suppressJoinFailure="yes" targetNamespace="http://FullTestProc" wpc:continueOnError="no" wpc:displayName="ProcessSnippet" wpc:executionMode="longRunning" wpc:id="1" wpc:validFrom="2017-08-31T07:49:54" wpc:version="IBM_7.0.500">
+  <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" location="FullTestInterface.wsdl" namespace="http://FullTestProc/FullTestInterface"/>
+  <bpws:import importType="http://www.w3.org/2001/XMLSchema" location="xsd-includes/http.FullTestLib.xsd" namespace="http://FullTestLib"/>
+  <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" location="ProcessSnippetArtifacts.wsdl" namespace="http://FullTestProc/Component1Artifacts"/>
+  <bpws:import importType="http://www.w3.org/2001/XMLSchema" location="Person.xsd" namespace="http://FullTestLib"/>
+  <bpws:import importType="http://www.w3.org/2001/XMLSchema" location="Stuff.xsd" namespace="http://FullTestLib"/>
+  <bpws:partnerLinks>
+    <bpws:partnerLink myRole="Interface" name="FullTestInterface" partnerLinkType="ns:FullTestInterfacePLT" wpc:id="2"/>
+  </bpws:partnerLinks>
+  <bpws:variables>
+    <bpws:variable name="input1" type="ns0:Person" wpc:id="6"/>
+    <bpws:variable name="output1" type="ns0:Stuff" wpc:id="7"/>
+  </bpws:variables>
+  <bpws:sequence name="HiddenSequence" wpc:id="1073741827">
+    <bpws:receive createInstance="yes" name="Receive" operation="operation1" partnerLink="FullTestInterface" portType="ns1:FullTestInterface" wpc:displayName="Receive" wpc:id="4" wpc:transactionalBehavior="commitAfter">
+      <wpc:output>
+        <wpc:parameter name="input1" variable="input1"/>
+      </wpc:output>
+    </bpws:receive>
+    <bpws:invoke name="Snippet" operation="null" partnerLink="null" portType="wpc:null" wpc:continueOnError="inherit" wpc:displayName="Snippet" wpc:id="8">
+      <wpc:script>
+        <wpc:javaCode><![CDATA[com.ibm.websphere.bo.BOFactory factory = (com.ibm.websphere.bo.BOFactory) new com.ibm.websphere.sca.ServiceManager().locateService("com/ibm/websphere/bo/BOFactory");
+output1 = factory.create("http://FullTestLib","Stuff");
+if (!"foo".equals("bar")) {
+output1.set("field1", input1.get("vorname"));
+output1.set("field2", input1.get("nachname"));
+}]]></wpc:javaCode>
+      </wpc:script>
+    </bpws:invoke>
+    <bpws:reply name="Reply" operation="operation1" partnerLink="FullTestInterface" portType="ns1:FullTestInterface" wpc:displayName="Reply" wpc:id="5">
+      <wpc:input>
+        <wpc:parameter name="output1" variable="output1"/>
+      </wpc:input>
+    </bpws:reply>
+  </bpws:sequence>
+</bpws:process>

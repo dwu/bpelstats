@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot domainID="com.ibm.msl.mapping.xml" targetNamespace="http://FullTestProc/xslt/XSLTransformation1_req_1" version="7.0.500" xmlns="http://www.ibm.com/2008/ccl/Mapping" xmlns:map="http://FullTestProc/xslt/XSLTransformation1_req_1">
+    <input path="smo://smo/name%3Dwsdl-primary/message%3D%257Bhttp%253A%252F%252FFullTestProc%252FFullTestInterface%257Doperation1RequestMsg/xpath%3D%252Fbody/smo.xsd"/>
+    <output path="smo://smo/name%3Dwsdl-primary/message%3D%257Bhttp%253A%252F%252FFullTestProc%252FFullTestInterface%257Doperation1ResponseMsg/xpath%3D%252Fbody/smo.xsd"/>
+    <imports>
+        <import kind="xml" location="XSLTransformation1_req_1.xml"/>
+    </imports>
+    <mappingDeclaration name="XSLTransformation1_req_1">
+        <input path="body"/>
+        <output path="body"/>
+        <move>
+            <input path="operation1/input1/vorname"/>
+            <output path="operation1Response/output1/field1"/>
+        </move>
+        <move>
+            <input path="operation1/input1/nachname"/>
+            <output path="operation1Response/output1/field2"/>
+        </move>
+    </mappingDeclaration>
+</mappingRoot>
