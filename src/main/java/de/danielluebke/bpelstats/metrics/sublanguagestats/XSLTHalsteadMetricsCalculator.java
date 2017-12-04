@@ -16,7 +16,7 @@ public class XSLTHalsteadMetricsCalculator extends DefaultHandler implements IHa
 	private final String XSLT_NAMESPACE = "http://www.w3.org/1999/XSL/Transform";
 
 	private HalsteadMetrics metrics = new HalsteadMetrics();
-	private XPathHalsteadMetricsCalculator xpathHalsteadMetricsCalculator = new XPathHalsteadMetricsCalculator();
+	private XQueryHalsteadMetricsCalculator xpathHalsteadMetricsCalculator = new XQueryHalsteadMetricsCalculator();
 
 	@Override
 	public void startDocument() throws SAXException {

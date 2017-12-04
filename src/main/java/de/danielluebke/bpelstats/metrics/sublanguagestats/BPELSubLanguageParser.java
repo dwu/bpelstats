@@ -94,7 +94,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private static final String BO_MAP_TRANSFORM_PATTERN = "_serv.transform\\(\".*\", \"(.*)\", inputMap, outputMap, .*\\)\\);";
 	private Pattern boMapTransform;	
 	
-	private XPathHalsteadMetricsCalculator xpathHalsteadCalculator = null;
+	private XQueryHalsteadMetricsCalculator xpathHalsteadCalculator = null;
 	private HalsteadMetrics xqueryHalsteadMetrics;
 	private HalsteadMetrics javaHalsteadMetrics;
 	
@@ -129,7 +129,7 @@ public class BPELSubLanguageParser extends DefaultHandler {
 		boMapOccurrences = 0;
 		xmlMapOccurrences = 0;
 		
-		xpathHalsteadCalculator = new XPathHalsteadMetricsCalculator();
+		xpathHalsteadCalculator = new XQueryHalsteadMetricsCalculator();
 		xqueryHalsteadMetrics = new HalsteadMetrics();
 		javaHalsteadMetrics = new HalsteadMetrics();
 	}

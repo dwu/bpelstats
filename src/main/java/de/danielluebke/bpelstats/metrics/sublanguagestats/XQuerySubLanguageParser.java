@@ -20,13 +20,15 @@ public class XQuerySubLanguageParser {
 	private int loc = 0;
 	private int complexity = 0;
 	private boolean isComplex;
-	private XQueryHalsteadMetricsCalculator xqueryHalsteadCalculator = new XQueryHalsteadMetricsCalculator();
 	private HalsteadMetrics halsteadMetrics;
 
 	public void parse(String xquery) throws XQueryParsingException {
 		loc = LOCCalculator.calculateLOC(xquery);
 		complexity = calculateComplexity(xquery);
-		xqueryHalsteadCalculator.calculateHalsteadMetrics(xquery);
+		
+		XQueryHalsteadMetricsCalculator xqueryHalsteadCalculator = new XQueryHalsteadMetricsCalculator();
+		xqueryHalsteadCalculator.parse(xquery);
+		halsteadMetrics = xqueryHalsteadCalculator.getHalsteadMetrics();
 	}
 
 	private int calculateComplexity(String xquery)
