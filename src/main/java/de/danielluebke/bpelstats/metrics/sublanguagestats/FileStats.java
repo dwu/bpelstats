@@ -12,8 +12,6 @@ public class FileStats {
 	public int xquerySimpleQueryLOCs;
 	public int xqueryExternalLOCs;
 	public int xqueryReuseLOCs;
-	public int xsltExternalLOCs;
-	public int xsltReuseLOCs;
 	public int xpathExpressionsLOCs;
 	public int xpathQueriesLOCs;
 	public int xqueryComplexExpressionLOCs;
@@ -25,7 +23,13 @@ public class FileStats {
 	public int xpathQueryOccurrences = 0;
 	public int xpathExpressionOccurrences = 0;
 	public int xqueryComplexity = 0;
+	public int xqueryNumIterations;
+	public int xqueryNumConditions;
+	public int xsltExternalLOCs;
+	public int xsltReuseLOCs;
 	public int xsltComplexity = 0;
+	public int xsltNumIterations;
+	public int xsltNumConditions;
 	public int javaLOCs = 0;
 	public int javaSLOCs = 0;
 	public int javaComplexity = 0;
@@ -46,6 +50,7 @@ public class FileStats {
 	public HalsteadMetrics bomapHalstead = new HalsteadMetrics();
 	public HalsteadMetrics javaHalstead = new HalsteadMetrics();
 
+
 	@Override
 	public String toString() {
 		return absoluteFileName.getName() + ": XQ=" + (xquerySimpleExpressionLOCs+xquerySimpleQueryLOCs+xqueryExternalLOCs+xqueryReuseLOCs) + ", XSLT=" + (xsltReuseLOCs+xsltExternalLOCs) + ", XPath:" + (xpathExpressionsLOCs+xpathQueriesLOCs);
@@ -56,8 +61,7 @@ public class FileStats {
 		xquerySimpleQueryLOCs += f.xquerySimpleQueryLOCs;
 		xqueryExternalLOCs += f.xqueryExternalLOCs;
 		xqueryReuseLOCs += f.xqueryReuseLOCs;
-		xsltExternalLOCs += f.xsltExternalLOCs;
-		xsltReuseLOCs += f.xsltReuseLOCs;
+		
 		xpathExpressionsLOCs += f.xpathExpressionsLOCs;
 		xpathQueriesLOCs += f.xpathQueriesLOCs;
 		xqueryComplexExpressionLOCs += f.xqueryComplexExpressionLOCs;
@@ -66,10 +70,16 @@ public class FileStats {
 		xqueryComplexExpressionOccurrences += f.xqueryComplexExpressionOccurrences;
 		xquerySimpleQueryOccurrences += f.xquerySimpleQueryOccurrences;
 		xqueryComplexQueryOccurrences += f.xqueryComplexQueryOccurrences;
+		xqueryNumConditions+= f.xqueryNumConditions;
+		xqueryNumIterations += f.xqueryNumIterations;
 		xpathQueryOccurrences += f.xpathQueryOccurrences;
 		xpathExpressionOccurrences += f.xpathExpressionOccurrences;
 		xqueryComplexity += f.xqueryComplexity;
+		xsltExternalLOCs += f.xsltExternalLOCs;
+		xsltReuseLOCs += f.xsltReuseLOCs;
 		xsltComplexity += f.xsltComplexity;
+		xsltNumConditions+= f.xsltNumConditions;
+		xsltNumIterations += f.xsltNumIterations;
 		javaLOCs += f.javaLOCs;
 		javaSLOCs += f.javaSLOCs;
 		javaComplexity += f.javaComplexity;

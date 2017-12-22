@@ -21,6 +21,8 @@ public class XQuerySubLanguageParser {
 	private int complexity = 0;
 	private boolean isComplex;
 	private HalsteadMetrics halsteadMetrics;
+	private int numConditions;
+	private int numIterations;
 
 	public void parse(String xquery) throws XQueryParsingException {
 		loc = LOCCalculator.calculateLOC(xquery);
@@ -54,6 +56,13 @@ public class XQuerySubLanguageParser {
 				complexity++;
 				hasFunction |= (t instanceof FunctionDeclContext);
 			}
+			
+			if(t instanceof ForVarContext) {
+				numIterations++;
+			}
+			if(t instanceof IfExprContext) {
+				numIterations += 2; // else is mandatory in XQuery
+			}
 
 			for (int i = 0; i < t.getChildCount(); i++) {
 				toParse.add(t.getChild(i));
@@ -84,4 +93,12 @@ public class XQuerySubLanguageParser {
 	public HalsteadMetrics getHalsteadMetrics() {
 		return halsteadMetrics;
 	}
+	
+	public int getNumConditions() {
+        return numConditions;
+    }
+
+    public int getNumIterations() {
+        return numIterations;
+    }
 }

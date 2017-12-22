@@ -12,8 +12,8 @@ import org.antlr.v4.runtime.Vocabulary;
 
 public class JavaWPSSubLanguageParser {
 
-    private static final List<String> JAVA_COMPLEXITY_STRUCTURES_CONDITION = Collections.unmodifiableList(Arrays.asList("IF", "SWITCH"));
-    private static final List<String> JAVA_COMPLEXITY_STRUCTURES_ITERATION = Collections.unmodifiableList(Arrays.asList("WHILE", "FOR"));
+    private static final List<String> JAVA_COMPLEXITY_STRUCTURES_CONDITION = Collections.unmodifiableList(Arrays.asList("IF", "ELSE", "CASE", "DEFAULT"));
+    private static final List<String> JAVA_COMPLEXITY_STRUCTURES_ITERATION = Collections.unmodifiableList(Arrays.asList("WHILE", "FOR", "DO"));
 
     private List<Import> imports = new ArrayList<Import>();
 

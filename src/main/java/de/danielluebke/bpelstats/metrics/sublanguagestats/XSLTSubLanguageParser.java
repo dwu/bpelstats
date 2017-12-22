@@ -13,7 +13,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XSLTSubLanguageParser extends DefaultHandler {
 
-	private static final List<String> XSLT_COMPLEXITY_STRUCTURES = Collections.unmodifiableList(Arrays.asList("template", "if", "switch", "for-each")); 
+	private static final List<String> XSLT_COMPLEXITY_STRUCTURES = Collections.unmodifiableList(Arrays.asList("template", "if", "when", "otherwise", "for-each")); 
+	private static final List<String> XSLT_CONDTIONAL_STRUCTURES = Collections.unmodifiableList(Arrays.asList("if", "when", "otherwise")); 
+	private static final List<String> XSLT_ITERATION_STRUCTURES = Collections.unmodifiableList(Arrays.asList("for-each")); 
 	
 	private final String XSLT_NAMESPACE = "http://www.w3.org/1999/XSL/Transform";
 
@@ -22,6 +24,10 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 	private XSLTHalsteadMetricsCalculator halsteadCalculator = new XSLTHalsteadMetricsCalculator();
 
 	private File baseDirectory;
+
+	private int numConditions;
+
+	private int numIterations;
 	
 	public XSLTSubLanguageParser(File baseDirectory) {
 		this.baseDirectory = baseDirectory;
@@ -56,6 +62,14 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 		if (XSLT_COMPLEXITY_STRUCTURES.contains(localName)) {
 			complexity++;
 		}
+		
+		if(XSLT_CONDTIONAL_STRUCTURES.contains(localName)) {
+			numConditions++;
+		}
+		
+		if(XSLT_ITERATION_STRUCTURES.contains(localName)) {
+			numIterations++;
+		}
 	}
 	
 	@Override
@@ -74,4 +88,12 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 	public HalsteadMetrics getHalsteadMetrics() {
 		return halsteadCalculator.getHalsteadMetrics();
 	}
+	
+	public int getNumConditions() {
+        return numConditions;
+    }
+
+    public int getNumIterations() {
+        return numIterations;
+    }
 }

@@ -46,6 +46,8 @@ public class BpelSubLanguageStatsGatherer {
 		bpelFileStats.xpathQueryOccurrences = handler.getXPathQueryOccurrences();
 		bpelFileStats.xpathExpressionOccurrences = handler.getXPathExpressionOccurrences();
 		bpelFileStats.xqueryComplexity = handler.getXQueryComplexityExpression() + handler.getXQueryComplexityQuery();
+		bpelFileStats.xqueryNumConditions = handler.getXQueryNumConditions();
+		bpelFileStats.xqueryNumIterations = handler.getXQueryNumIterations();
 		bpelFileStats.javaLOCs = handler.getJavaLOCs();
 		bpelFileStats.javaSLOCs = handler.getJavaSLOCs();
 		bpelFileStats.javaComplexity = handler.getJavaComplexity();
@@ -64,8 +66,8 @@ public class BpelSubLanguageStatsGatherer {
 			Import imp = remainingImports.remove(0);
 			if(!processedImports.contains(imp)) {
 				if(imp.importType.equals("XSLT")) {
-					XSLTSubLanguageParser xsltSubLangauageStats = getXsltSubLangauageStats(imp.location);
-					remainingImports.addAll(xsltSubLangauageStats.getImports());
+					XSLTSubLanguageParser xsltSubLanguageStats = getXsltSubLangauageStats(imp.location);
+					remainingImports.addAll(xsltSubLanguageStats.getImports());
 					FileStats xsltFileStats = new FileStats();
 					xsltFileStats.fileType = "XSLT";
 					xsltFileStats.absoluteFileName = imp.location.getAbsoluteFile();
@@ -74,8 +76,10 @@ public class BpelSubLanguageStatsGatherer {
 					} else {
 						xsltFileStats.xsltExternalLOCs = calculateLOCs(xsltFileStats.absoluteFileName);
 					}
-					xsltFileStats.xsltComplexity = xsltSubLangauageStats.getComplexity();
-					xsltFileStats.xsltHalstead = xsltSubLangauageStats.getHalsteadMetrics();
+					xsltFileStats.xsltComplexity = xsltSubLanguageStats.getComplexity();
+					xsltFileStats.xsltNumConditions = xsltSubLanguageStats.getNumConditions();
+					xsltFileStats.xsltNumIterations = xsltSubLanguageStats.getNumIterations();
+					xsltFileStats.xsltHalstead = xsltSubLanguageStats.getHalsteadMetrics();
 					fileStats.add(xsltFileStats);
 				} else if(imp.importType.equals("XQUERY")) {
 					FileStats xqueryFileStats = new FileStats();

@@ -238,8 +238,10 @@ public class XQueryHalsteadMetricsCalculator implements IHalsteadMetricsCalculat
 					metrics.addOperand(terminal.getText());
 				}
 			} else {
-				for (int i = t.getChildCount() - 1; i >= 0 ; i--) {
-					toParse.add(0, t.getChild(i));
+				if(t != null) {
+					for (int i = t.getChildCount() - 1; i >= 0 ; i--) {
+						toParse.add(0, t.getChild(i));
+					} 
 				}
 			}
 		}

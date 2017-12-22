@@ -97,6 +97,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 	private XQueryHalsteadMetricsCalculator xpathHalsteadCalculator = null;
 	private HalsteadMetrics xqueryHalsteadMetrics;
 	private HalsteadMetrics javaHalsteadMetrics;
+	private int xqueryNumConditions;
+	private int xqueryNumIterations;
 	
 	public BPELSubLanguageParser(File baseDirectory) {
 		this.baseDirectory = baseDirectory;
@@ -309,6 +311,8 @@ public class BPELSubLanguageParser extends DefaultHandler {
 				boolean isComplex = xqueryParser.isComplex();
 				int loc = xqueryParser.getLoc();
 				xqueryComplexityExpression  += xqueryParser.getComplexity();
+				xqueryNumConditions += xqueryParser.getNumConditions();
+				xqueryNumIterations += xqueryParser.getNumIterations();
 				if(isComplex) {
 					xqueryComplexExpressionOccurrences++;
 					xqueryComplexExpressionLOCs += loc; 
@@ -503,6 +507,14 @@ public class BPELSubLanguageParser extends DefaultHandler {
 
 	public HalsteadMetrics getJavaHalsteadMetrics() {
 		return javaHalsteadMetrics;
+	}
+
+	public int getXQueryNumConditions() {
+		return xqueryNumConditions;
+	}
+
+	public int getXQueryNumIterations() {
+		return xqueryNumIterations;
 	}
 	
 }
