@@ -20,6 +20,10 @@ import es.uca.webservices.xquery.parser.XQueryParser.AddContext;
 import es.uca.webservices.xquery.parser.XQueryParser.AllDescPathContext;
 import es.uca.webservices.xquery.parser.XQueryParser.AllNamesContext;
 import es.uca.webservices.xquery.parser.XQueryParser.ComparisonContext;
+import es.uca.webservices.xquery.parser.XQueryParser.DirAttributeListContext;
+import es.uca.webservices.xquery.parser.XQueryParser.DirAttributeValueContext;
+import es.uca.webservices.xquery.parser.XQueryParser.DirElemConstructorOpenCloseContext;
+import es.uca.webservices.xquery.parser.XQueryParser.DirElemConstructorSingleTagContext;
 import es.uca.webservices.xquery.parser.XQueryParser.FlworExprContext;
 import es.uca.webservices.xquery.parser.XQueryParser.ForClauseContext;
 import es.uca.webservices.xquery.parser.XQueryParser.ForVarContext;
@@ -35,6 +39,7 @@ import es.uca.webservices.xquery.parser.XQueryParser.ParamContext;
 import es.uca.webservices.xquery.parser.XQueryParser.ParenContext;
 import es.uca.webservices.xquery.parser.XQueryParser.PredicateListContext;
 import es.uca.webservices.xquery.parser.XQueryParser.PrologContext;
+import es.uca.webservices.xquery.parser.XQueryParser.QNameContext;
 import es.uca.webservices.xquery.parser.XQueryParser.RelativePathExprContext;
 import es.uca.webservices.xquery.parser.XQueryParser.SequenceTypeContext;
 import es.uca.webservices.xquery.parser.XQueryParser.StringLiteralContext;
@@ -115,7 +120,6 @@ public class XQueryHalsteadMetricsCalculator implements IHalsteadMetricsCalculat
 //		printAntTree(moduleContext, 0);
 		while (toParse.size() > 0) {
 			Tree t = toParse.remove(0);
-//			System.out.println(t.getClass() + ":" + t.toString());
 			if(t instanceof FunctionNameContext) {
 				String functionName = ((TerminalNode)t.getChild(0)).getText();
 				metrics.addOperator(functionName);
@@ -220,6 +224,32 @@ public class XQueryHalsteadMetricsCalculator implements IHalsteadMetricsCalculat
 				toParse.add(t.getChild(2));
 				String comparisonOperator = findTextOfTerminalNode(t.getChild(1));
 				metrics.addOperator(comparisonOperator);
+			} else if(t instanceof DirElemConstructorSingleTagContext || t instanceof DirElemConstructorOpenCloseContext) {
+				// < elementQName DirAttributeListContext* / >
+				toParse.add(t.getChild(1)); // Element name
+				for(int i = 2; i < t.getChildCount(); i++) {
+					Tree c = t.getChild(i);
+					if(!(c instanceof TerminalNode) && !(c instanceof QNameContext)) {
+						toParse.add(0, c);
+					}
+				}
+			} else if(t instanceof DirAttributeListContext) {
+				// (QNAME = DirAttributeValueContext)*
+				for(int i = 0; i < t.getChildCount(); i++) {
+					Tree c = t.getChild(i);
+					if(c instanceof QNameContext) {
+						String attributeName = findTextOfTerminalNode(t.getChild(i));
+						if(!attributeName.startsWith("xmlns")) {
+							metrics.addOperand(attributeName);
+						}
+					}
+					if(c instanceof DirAttributeValueContext) {
+						toParse.add(0, c);
+					}
+				}
+			} else if(t instanceof DirAttributeValueContext) {
+				// " NoQuotesNoBracesNoAmpNoLAngContext "
+				metrics.addOperand(findTextOfTerminalNode(t.getChild(1)));
 			} else if(t instanceof PrologContext) {
 				// filter out any non-countable ; 
 				for(int i = t.getChildCount() - 1; i >= 0; i--) {

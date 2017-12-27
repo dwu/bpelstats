@@ -328,11 +328,19 @@ public class SAXStatsHandler extends DefaultHandler {
 				+ getCountElse() + getCountElseIf() + getCountExit() + getCountFlow()
 				+ getCountForEach() + getCountIf() + getCountOnAlarm()
 				+ getCountOnMessage() + getCountOnMessageHandler() + getCountPick()
-				+ getCountRepeatUntil() + getCountRethrow() + getCountThrow();
+				+ getCountRepeatUntil() + getCountRethrow() + getCountThrow() + getCountWhile();
 	}
 
 	public Map<String, Integer> getUsedExtensionActivities() {
 		return new HashMap<String, Integer>(extensionCounts);
+	}
+
+	public int getCountLinks() {
+		return getBpelCount("link");
+	}
+
+	public int getCountTransitionConditions() {
+		return getBpelCount("transitionCondition");
 	}
 
 }

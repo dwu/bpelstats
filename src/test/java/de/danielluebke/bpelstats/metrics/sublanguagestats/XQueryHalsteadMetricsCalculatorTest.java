@@ -311,5 +311,80 @@ public class XQueryHalsteadMetricsCalculatorTest {
 		assertEquals(1, metrics.getTotalNumberOfOperand("'a'"));
 		assertEquals(5, metrics.getUniqueOperands().size());
 	}
+	
+	@Test
+	public void testElement() throws Exception {
+		calculator.parse("<ns:a xmlns:ns=\"a\" />");
+		
+		HalsteadMetrics metrics = calculator.getHalsteadMetrics();
+
+		assertEquals(0, metrics.getUniqueOperators().size());
+		
+		assertEquals(1, metrics.getTotalNumberOfOperand("a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("ns:a"));
+		assertEquals(2, metrics.getUniqueOperands().size());
+	}
+	
+	@Test
+	public void testElementWithAttribute() throws Exception {
+		calculator.parse("<ns:a xmlns:ns=\"a\" name=\"hallo\" />");
+		
+		HalsteadMetrics metrics = calculator.getHalsteadMetrics();
+		
+		assertEquals(0, metrics.getUniqueOperators().size());
+		
+		assertEquals(1, metrics.getTotalNumberOfOperand("a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("ns:a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("name"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("hallo"));
+		assertEquals(4, metrics.getUniqueOperands().size());
+	}
+	
+	@Test
+	public void testElementWithClosingTag() throws Exception {
+		calculator.parse("<ns:a xmlns:ns=\"a\" name=\"hallo\"></ns:a>");
+		
+		HalsteadMetrics metrics = calculator.getHalsteadMetrics();
+		
+		assertEquals(0, metrics.getUniqueOperators().size());
+		
+		assertEquals(1, metrics.getTotalNumberOfOperand("ns:a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("name"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("hallo"));
+		assertEquals(4, metrics.getUniqueOperands().size());
+	}
+	
+	@Test
+	public void testElementWithClosingTagAndNestedElementAndText() throws Exception {
+		calculator.parse("<ns:a xmlns:ns=\"a\" name=\"hallo\"><ns:b>Text</ns:b></ns:a>");
+		
+		HalsteadMetrics metrics = calculator.getHalsteadMetrics();
+		
+		assertEquals(0, metrics.getUniqueOperators().size());
+		
+		assertEquals(1, metrics.getTotalNumberOfOperand("ns:a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("ns:b"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("Text"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("name"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("hallo"));
+		assertEquals(6, metrics.getUniqueOperands().size());
+	}
+	
+	@Test
+	public void testElementWithTwoAttributes() throws Exception {
+		calculator.parse("<ns:a xmlns:ns=\"a\" name=\"hallo\" name2=\"hallo\"></ns:a>");
+		
+		HalsteadMetrics metrics = calculator.getHalsteadMetrics();
+		
+		assertEquals(0, metrics.getUniqueOperators().size());
+		
+		assertEquals(1, metrics.getTotalNumberOfOperand("a"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("name"));
+		assertEquals(1, metrics.getTotalNumberOfOperand("name2"));
+		assertEquals(2, metrics.getTotalNumberOfOperand("hallo"));
+		assertEquals(5, metrics.getUniqueOperands().size());
+	}
 
 }

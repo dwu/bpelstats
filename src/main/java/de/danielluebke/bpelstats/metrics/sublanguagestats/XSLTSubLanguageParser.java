@@ -37,6 +37,8 @@ public class XSLTSubLanguageParser extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		imports.clear();
 		complexity = 0;
+		numConditions = 0;
+		numIterations = 0;
 		halsteadCalculator.startDocument();
 	}
 

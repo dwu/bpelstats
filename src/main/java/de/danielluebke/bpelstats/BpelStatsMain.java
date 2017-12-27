@@ -99,6 +99,7 @@ public final class BpelStatsMain {
 			return 2;
 		} catch (FileNotFoundException e) {
 			System.err.println("Problem while writing file: " + e.getMessage());
+			return 3;
 		} finally {
 			IOUtils.closeQuietly(out);
 		}

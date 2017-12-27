@@ -72,7 +72,7 @@ public abstract class StatisticsPackage {
 					writer.write(metricValue.toString());
 				}
 			} catch(Exception e) {
-				writer.write("Error calculating metrics: " + e.getMessage());
+				writer.write("Error calculating metrics: " + e.getMessage().replaceAll("\r\n", " ").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\t", " "));
 				e.printStackTrace();
 			}
 			writer.write("\n");

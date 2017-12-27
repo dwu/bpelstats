@@ -25,6 +25,9 @@ public class XQuerySubLanguageParser {
 	private int numIterations;
 
 	public void parse(String xquery) throws XQueryParsingException {
+		numConditions = 0;
+		numIterations = 0;
+		
 		loc = LOCCalculator.calculateLOC(xquery);
 		complexity = calculateComplexity(xquery);
 		
@@ -61,7 +64,7 @@ public class XQuerySubLanguageParser {
 				numIterations++;
 			}
 			if(t instanceof IfExprContext) {
-				numIterations += 2; // else is mandatory in XQuery
+				numConditions += 2; // else is mandatory in XQuery
 			}
 
 			for (int i = 0; i < t.getChildCount(); i++) {
