@@ -30,6 +30,7 @@ public class FileStats {
 	public int xsltComplexity = 0;
 	public int xsltNumIterations;
 	public int xsltNumConditions;
+	public int xsltOccurrences;
 	public int javaLOCs = 0;
 	public int javaSLOCs = 0;
 	public int javaComplexity = 0;
@@ -49,6 +50,7 @@ public class FileStats {
 	public HalsteadMetrics xmlmapHalstead = new HalsteadMetrics();
 	public HalsteadMetrics bomapHalstead = new HalsteadMetrics();
 	public HalsteadMetrics javaHalstead = new HalsteadMetrics();
+
 
 
 	@Override
@@ -80,6 +82,7 @@ public class FileStats {
 		xsltComplexity += f.xsltComplexity;
 		xsltNumConditions+= f.xsltNumConditions;
 		xsltNumIterations += f.xsltNumIterations;
+		xsltOccurrences = f.xsltOccurrences;
 		javaLOCs += f.javaLOCs;
 		javaSLOCs += f.javaSLOCs;
 		javaComplexity += f.javaComplexity;

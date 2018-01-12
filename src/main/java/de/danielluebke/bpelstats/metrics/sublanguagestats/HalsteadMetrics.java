@@ -127,7 +127,7 @@ public class HalsteadMetrics {
 	}
 	
 	public String getLongTextRepresentation() {
-		String formatString = "%26s: %15.4f\n";
+		String formatString = "%26s: %15.4f" + System.lineSeparator();
 		return
 				String.format(formatString, "Unique Operators", (double)uniqueOperators.size()) + 
 				String.format(formatString, "Unique Operands", (double)uniqueOperands.size()) + 

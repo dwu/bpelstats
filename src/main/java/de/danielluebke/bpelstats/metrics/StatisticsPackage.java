@@ -75,7 +75,7 @@ public abstract class StatisticsPackage {
 				writer.write("Error calculating metrics: " + e.getMessage().replaceAll("\r\n", " ").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\t", " "));
 				e.printStackTrace();
 			}
-			writer.write("\n");
+			writer.write(System.lineSeparator());
 		}
 	}
 
@@ -87,7 +87,7 @@ public abstract class StatisticsPackage {
 				writer.write(delimiter);
 				writer.write(header);
 			}
-			writer.write("\n");
+			writer.write(System.lineSeparator());
 		}
 	}
 

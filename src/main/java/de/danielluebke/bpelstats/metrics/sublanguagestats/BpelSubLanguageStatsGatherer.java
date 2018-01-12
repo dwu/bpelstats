@@ -70,6 +70,7 @@ public class BpelSubLanguageStatsGatherer {
 					remainingImports.addAll(xsltSubLanguageStats.getImports());
 					FileStats xsltFileStats = new FileStats();
 					xsltFileStats.fileType = "XSLT";
+					xsltFileStats.xsltOccurrences = 1;
 					xsltFileStats.absoluteFileName = imp.location.getAbsoluteFile();
 					if(isInReusablePath(reusePaths, xsltFileStats)) {
 						xsltFileStats.xsltReuseLOCs = calculateLOCs(xsltFileStats.absoluteFileName);

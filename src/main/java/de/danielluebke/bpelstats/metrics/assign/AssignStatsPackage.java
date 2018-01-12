@@ -27,7 +27,7 @@ public class AssignStatsPackage extends StatisticsPackage {
 					writer.write(anonymizeFilenameIfNecessary(assign.getAssignPath()));
 					writer.write(delimiter);
 					writer.write("" + assign.getCopyCount());
-					writer.write("\n");
+					writer.write(System.lineSeparator());
 				}
 			} catch(Exception e) {
 				throw new IOException(e);
