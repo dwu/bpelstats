@@ -31,12 +31,18 @@ public class FileStats {
 	public int xsltNumIterations;
 	public int xsltNumConditions;
 	public int xsltOccurrences;
-	public int javaLOCs = 0;
-	public int javaSLOCs = 0;
-	public int javaComplexity = 0;
-	public int javaNumConditions = 0;
-	public int javaNumIterations = 0;	
-	public int javaOccurrences = 0;
+	public int javaCodeLOCs = 0;
+	public int javaCodeSLOCs = 0;
+	public int javaCodeComplexity = 0;
+	public int javaCodeNumConditions = 0;
+	public int javaCodeNumIterations = 0;	
+	public int javaCodeOccurrences = 0;
+	public int javaExpressionLOCs = 0;
+	public int javaExpressionSLOCs = 0;
+	public int javaExpressionComplexity = 0;
+	public int javaExpressionNumConditions = 0;
+	public int javaExpressionNumIterations = 0;	
+	public int javaExpressionOccurrences = 0;
 	public int wpsBuiltInOccurrences = 0;
 	public int xmlMapOccurrences = 0;
 	public int boMapLOCs = 0;
@@ -49,9 +55,8 @@ public class FileStats {
 	public HalsteadMetrics xqueryHalstead = new HalsteadMetrics();
 	public HalsteadMetrics xmlmapHalstead = new HalsteadMetrics();
 	public HalsteadMetrics bomapHalstead = new HalsteadMetrics();
-	public HalsteadMetrics javaHalstead = new HalsteadMetrics();
-
-
+	public HalsteadMetrics javaCodeHalstead = new HalsteadMetrics();
+	public HalsteadMetrics javaExpressionHalstead = new HalsteadMetrics();
 
 	@Override
 	public String toString() {
@@ -83,12 +88,18 @@ public class FileStats {
 		xsltNumConditions+= f.xsltNumConditions;
 		xsltNumIterations += f.xsltNumIterations;
 		xsltOccurrences = f.xsltOccurrences;
-		javaLOCs += f.javaLOCs;
-		javaSLOCs += f.javaSLOCs;
-		javaComplexity += f.javaComplexity;
-		javaNumConditions += f.javaNumConditions;
-		javaNumIterations += f.javaNumIterations;		
-		javaOccurrences += f.javaOccurrences;
+		javaCodeLOCs += f.javaCodeLOCs;
+		javaCodeSLOCs += f.javaCodeSLOCs;
+		javaCodeComplexity += f.javaCodeComplexity;
+		javaCodeNumConditions += f.javaCodeNumConditions;
+		javaCodeNumIterations += f.javaCodeNumIterations;		
+		javaCodeOccurrences += f.javaCodeOccurrences;
+		javaExpressionLOCs += f.javaExpressionLOCs;
+		javaExpressionSLOCs += f.javaExpressionSLOCs;
+		javaExpressionComplexity += f.javaExpressionComplexity;
+		javaExpressionNumConditions += f.javaExpressionNumConditions;
+		javaExpressionNumIterations += f.javaExpressionNumIterations;		
+		javaExpressionOccurrences += f.javaExpressionOccurrences;
 		wpsBuiltInOccurrences += f.wpsBuiltInOccurrences;
 		xmlMapOccurrences += f.xmlMapOccurrences;
 		boMapLOCs += f.boMapLOCs;
@@ -101,6 +112,7 @@ public class FileStats {
 		xqueryHalstead.add(f.xqueryHalstead);
 		xmlmapHalstead.add(f.xmlmapHalstead);
 		bomapHalstead.add(f.bomapHalstead);
-		javaHalstead.add(f.javaHalstead);
+		javaCodeHalstead.add(f.javaCodeHalstead);
+		javaExpressionHalstead.add(f.javaExpressionHalstead);
 	}
 }
